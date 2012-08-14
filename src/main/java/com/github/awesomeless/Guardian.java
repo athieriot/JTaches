@@ -55,7 +55,7 @@ public class Guardian {
     }
 
     public void cancel() {
-        globalWatchKey.cancel();
+        this.globalWatchKey.cancel();
     }
 
     public void onEvent(WatchEvent<?> event) {
