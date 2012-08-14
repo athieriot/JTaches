@@ -8,7 +8,7 @@ public class Command {
 
     public static void main(String[] args) {
         try {
-            Guardian guardian = new Guardian();
+            Guardian guardian = Guardian.create();
             guardian.register(get("."));
             guardian.watch();
         } catch (IOException e) {

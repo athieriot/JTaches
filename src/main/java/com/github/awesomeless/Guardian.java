@@ -8,6 +8,7 @@ import static java.nio.file.Paths.get;
 public class Guardian {
 
     private WatchService watchService;
+    private WatchKey globalWatchKey;
 
     public Guardian() throws IOException {
         FileSystem fileSystem = FileSystems.getDefault();
@@ -34,17 +35,17 @@ public class Guardian {
 
     public void watch() {
         try {
-            WatchKey watchKey = this.watchService.take();
+            globalWatchKey = this.watchService.take();
 
             while (true) {
-                for (final WatchEvent<?> event : watchKey.pollEvents()) {
-                    doEvent(event);
+                for (final WatchEvent<?> event : globalWatchKey.pollEvents()) {
+                    onEvent(event);
                 }
 
-                if (!watchKey.reset()) {
+                if (!globalWatchKey.reset()) {
                     System.out.println("Watcher no longer valid. Closing.");
-                    watchKey.cancel();
-                    watchService.close();
+                    cancel();
+                    this.watchService.close();
                     break;
                 }
             }
@@ -53,15 +54,31 @@ public class Guardian {
         }
     }
 
-    private void doEvent(WatchEvent<?> event) {
+    public void cancel() {
+        globalWatchKey.cancel();
+    }
+
+    public void onEvent(WatchEvent<?> event) {
         if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-            System.out.println("Created: " + event.context().toString());
+            onCreate(event);
         }
         if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-            System.out.println("Delete: " + event.context().toString());
+            onDelete(event);
         }
         if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-            System.out.println("Modify: " + event.context().toString());
+            onModify(event);
         }
+    }
+
+    public void onModify(WatchEvent<?> event) {
+        System.out.println("Modify: " + event.context().toString());
+    }
+
+    public void onDelete(WatchEvent<?> event) {
+        System.out.println("Delete: " + event.context().toString());
+    }
+
+    public void onCreate(WatchEvent<?> event) {
+        System.out.println("Created: " + event.context().toString());
     }
 }
