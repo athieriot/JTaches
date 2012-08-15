@@ -72,7 +72,7 @@ public class GuardianTest {
             new Runnable() {
                 public void run() {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                         createFile(get(temporary_directory.toString(), "areyouwatchingtome"));
 
                         guardian.cancel();
