@@ -14,19 +14,21 @@
       <!-- General -->
       <java.version>1.7</java.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <main.class>com.github.awesomeless.jtaches.Command</main.class>
 
-       <!-- Libraries -->
-       <guava.version>13.0</guava.version>
-       <jcommander.version>1.29</jcommander.version>
-       <snakeyaml.version>1.10</snakeyaml.version>
+      <!-- Libraries -->
+      <guava.version>13.0</guava.version>
+      <jcommander.version>1.29</jcommander.version>
+      <snakeyaml.version>1.10</snakeyaml.version>
 
-       <!-- Tests -->
-       <testng.version>6.7</testng.version>
-       <mockito.version>1.9.5-rc1</mockito.version>
+      <!-- Tests -->
+      <testng.version>6.7</testng.version>
+      <mockito.version>1.9.5-rc1</mockito.version>
 
-       <!-- Plugins -->
-       <maven.compiler.version>2.3.2</maven.compiler.version>
-       <exec.maven.version>1.2.1</exec.maven.version>
+      <!-- Plugins -->
+      <maven.compiler.version>2.3.2</maven.compiler.version>
+      <exec.maven.version>1.2.1</exec.maven.version>
+      <maven.assembly.version>2.3</maven.assembly.version>
    </properties>
 
    <build>
@@ -52,8 +54,31 @@
                </execution>
             </executions>
             <configuration>
-               <mainClass>com.github.awesomeless.jtaches.Command</mainClass>
+               <mainClass>${main.class}</mainClass>
             </configuration>
+         </plugin>
+         <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>${maven.assembly.version}</version>
+            <configuration>
+               <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+               </descriptorRefs>
+               <archive>
+                  <manifest>
+                     <mainClass>${main.class}</mainClass>
+                  </manifest>
+               </archive>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>make-assembly</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>single</goal>
+                  </goals>
+               </execution>
+            </executions>
          </plugin>
       </plugins>
    </build>
