@@ -63,9 +63,10 @@ public class GuardianTest {
         verify(guardian, never()).onEvent(any(WatchEvent.class));
     }
 
-    @Test(timeOut = 3000)
+    @Test(timeOut = 5000)
     public void a_guardian_must_watch_true_file_creation() throws IOException {
         final Guardian guardian = spy(Guardian.create());
+        Tache dummy = spy(new DummyTache(temporary_directory));
 
         Thread creatorThread = new Thread(
             new Runnable() {
@@ -83,7 +84,6 @@ public class GuardianTest {
         );
         creatorThread.start();
 
-        Tache dummy = spy(new DummyTache(temporary_directory));
         guardian.registerTache(dummy);
         guardian.watch();
 
@@ -95,6 +95,7 @@ public class GuardianTest {
     public void a_guardian_must_fire_onCreate_events() throws IOException {
         Guardian guardian = Guardian.create();
         Tache dummy = spy(new DummyTache(temporary_directory));
+
         WatchEvent<Path> createEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_CREATE);
 
         guardian.registerTache(dummy);
@@ -109,6 +110,7 @@ public class GuardianTest {
     public void a_guardian_must_fire_onDelete_events() throws IOException {
         Guardian guardian = spy(Guardian.create());
         Tache dummy = spy(new DummyTache(temporary_directory));
+
         WatchEvent<Path> deleteEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_DELETE);
 
         guardian.registerTache(dummy);
@@ -123,6 +125,7 @@ public class GuardianTest {
     public void a_guardian_must_fire_onModify_events() throws IOException {
         Guardian guardian = spy(Guardian.create());
         Tache dummy = spy(new DummyTache(temporary_directory));
+
         WatchEvent<Path> modifyEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_MODIFY);
 
         guardian.registerTache(dummy);
