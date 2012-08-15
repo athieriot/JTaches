@@ -4,11 +4,8 @@ import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-import java.nio.file.*;
 import java.util.Map;
 
-import static java.nio.file.Files.exists;
-import static java.nio.file.Paths.get;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.security.InvalidParameterException;
 
+import static com.github.awesomeless.jtaches.utils.TestUtils.newWatchEvent;
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.*;
@@ -139,19 +140,5 @@ public class GuardianTest {
         verify(dummy, never()).onCreate(modifyEvent);
         verify(dummy, never()).onDelete(modifyEvent);
         verify(dummy).onModify(modifyEvent);
-    }
-
-    private WatchEvent<Path> newWatchEvent(final WatchEvent.Kind<Path> kind) {
-        return new WatchEvent<Path>() {
-            @Override
-            public Kind<Path> kind() {return kind;}
-            @Override
-            public int count() {return 0;}
-            @Override
-            public Path context() {
-                try {return Files.createTempFile("noevent", "");
-                } catch (IOException e) {return null;}
-            }
-        };
     }
 }
