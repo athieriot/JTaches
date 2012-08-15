@@ -1,11 +1,16 @@
 package com.github.awesomeless.jtaches;
 
+import com.github.awesomeless.jtaches.taches.internal.ConfiguredTache;
+
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 
-public class DummyTache implements Tache {
+public class DummyTache  implements Tache {
 
     private Path path;
+
+    public DummyTache() {
+    }
 
     public DummyTache(Path path) {
         this.path = path;

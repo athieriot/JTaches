@@ -6,6 +6,8 @@ import com.github.awesomeless.jtaches.taches.SysoutTache;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.util.Map;
 
@@ -31,9 +33,39 @@ public class Command {
         Map<String, Map<String, String>> configurationMap = parseConfigurationFile(commandArgs.configurationFile);
 
         Guardian guardian = Guardian.create();
-        guardian.registerTache(new SysoutTache(configurationMap.get("SysoutTache")));
+
+        for(String key : configurationMap.keySet()) {
+            Tache newTache = buildNewTache(key, configurationMap.get(key));
+
+            //- If a tache is invalid, the program quit
+            //- If the configuration file reference a non existing class, the guardian skip it
+            guardian.registerTache(newTache);
+        }
 
         if(!commandArgs.registerOnly) guardian.watch();
+    }
+
+    private static Tache buildNewTache(String key, Map<String, String> configuration) {
+        try {
+            return constructionByReflection(key, configuration);
+
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | InvocationTargetException e) {
+            System.out.println("Unable to build a tache for this configuration: " + key);
+        }
+
+        return null;
+    }
+    static Tache constructionByReflection(String key, Map<String, String> configuration) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        Class clazz = Class.forName(key);
+
+        //TODO: Need to support more constructors
+        try {
+            Constructor constructor = clazz.getConstructor(Map.class);
+            return (Tache) constructor.newInstance(configuration);
+
+        } catch(NoSuchMethodException e) {
+            return (Tache) clazz.newInstance();
+        }
     }
 
     private static CommandArgs parseCommandLine(String[] args) {
