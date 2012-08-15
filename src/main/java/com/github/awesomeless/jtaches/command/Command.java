@@ -1,16 +1,15 @@
-package com.github.awesomeless.jtaches;
+package com.github.awesomeless.jtaches.command;
 
 import com.beust.jcommander.JCommander;
-import com.github.awesomeless.jtaches.command.CommandArgs;
+import com.github.awesomeless.jtaches.Guardian;
 import com.github.awesomeless.jtaches.taches.SysoutTache;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.Map;
+
+import static com.github.awesomeless.jtaches.command.Configuration.yamlToMap;
 
 public class Command {
 
@@ -46,17 +45,12 @@ public class Command {
     }
     private static Map<String, String> parseConfigurationFile(String configurationFile) throws FileNotFoundException {
         try {
-            return yamlLoading(configurationFile);
+            return yamlToMap(configurationFile);
         } catch(FileNotFoundException fnfe) {
             System.out.println("Configuration file did not exists.");
             System.exit(1);
         }
 
         return null;
-    }
-
-    static Map<String, String> yamlLoading(String configurationFile) throws FileNotFoundException {
-        Yaml yaml = new Yaml();
-        return (Map<String, String>) yaml.load(new FileInputStream(new File(configurationFile)));
     }
 }

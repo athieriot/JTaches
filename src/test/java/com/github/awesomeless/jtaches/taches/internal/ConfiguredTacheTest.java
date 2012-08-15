@@ -1,4 +1,4 @@
-package com.github.awesomeless.jtaches;
+package com.github.awesomeless.jtaches.taches.internal;
 
 import org.testng.annotations.Test;
 

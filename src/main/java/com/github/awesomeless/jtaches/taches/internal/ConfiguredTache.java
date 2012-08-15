@@ -1,13 +1,14 @@
-package com.github.awesomeless.jtaches;
+package com.github.awesomeless.jtaches.taches.internal;
+
+import com.github.awesomeless.jtaches.Tache;
 
 import java.nio.file.Path;
 import java.util.Map;
 
+import static com.github.awesomeless.jtaches.command.Configuration.CONFIGURATION_PATH;
 import static java.nio.file.Paths.get;
 
 abstract public class ConfiguredTache implements Tache {
-
-    public final static String CONFIGURATION_PATH = "path";
 
     private Map<String, String> configuration;
 

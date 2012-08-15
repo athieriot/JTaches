@@ -1,6 +1,6 @@
 package com.github.awesomeless.jtaches.taches;
 
-import com.github.awesomeless.jtaches.ConfiguredTache;
+import com.github.awesomeless.jtaches.taches.internal.ConfiguredTache;
 
 import java.nio.file.WatchEvent;
 import java.util.Map;
