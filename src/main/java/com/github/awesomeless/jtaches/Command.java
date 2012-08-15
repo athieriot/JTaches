@@ -2,13 +2,12 @@ package com.github.awesomeless.jtaches;
 
 import com.beust.jcommander.JCommander;
 import com.github.awesomeless.jtaches.command.CommandArgs;
+import com.github.awesomeless.jtaches.taches.SysoutTache;
+import org.yaml.snakeyaml.Yaml;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.WatchEvent;
+import java.io.*;
 import java.security.InvalidParameterException;
-
-import static java.nio.file.Paths.get;
+import java.util.Map;
 
 public class Command {
 
@@ -27,9 +26,10 @@ public class Command {
 
     public static void executeMain(String [] args) throws IOException, InterruptedException {
         CommandArgs commandArgs = parseCommandLine(args);
+        Map<String, String> configurationMap = parseConfigurationFile(commandArgs.configurationFile);
 
         Guardian guardian = Guardian.create();
-        guardian.registerTache(null);
+        guardian.registerTache(new SysoutTache(configurationMap));
 
         if(!commandArgs.registerOnly) guardian.watch();
     }
@@ -40,5 +40,20 @@ public class Command {
 
         if(commandArgs.help) {jCommander.usage(); System.exit(0);}
         return commandArgs;
+    }
+    private static Map<String, String> parseConfigurationFile(String configurationFile) throws FileNotFoundException {
+        try {
+            return yamlLoading(configurationFile);
+        } catch(FileNotFoundException fnfe) {
+            System.out.println("Configuration file did not exists.");
+            System.exit(1);
+        }
+
+        return null;
+    }
+
+    static Map<String, String> yamlLoading(String configurationFile) throws FileNotFoundException {
+        Yaml yaml = new Yaml();
+        return (Map<String, String>) yaml.load(new FileInputStream(new File(configurationFile)));
     }
 }

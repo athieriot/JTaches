@@ -2,8 +2,6 @@ package com.github.awesomeless.jtaches;
 
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
-import java.nio.file.Watchable;
-import java.util.Collection;
 
 public interface Tache {
     Path getPath();

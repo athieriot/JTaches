@@ -1,8 +1,7 @@
 package com.github.awesomeless.jtaches;
 
-import com.github.awesomeless.jtaches.Tache;
-
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.nio.file.WatchEvent;
 
 public class DummyTache implements Tache {
 

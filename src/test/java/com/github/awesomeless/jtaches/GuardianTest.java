@@ -10,9 +10,7 @@ import java.security.InvalidParameterException;
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class GuardianTest {
 

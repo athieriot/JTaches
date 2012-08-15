@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.security.InvalidParameterException;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.nio.file.StandardWatchEventKinds.*;
 
 public class Guardian {
 
@@ -84,15 +82,12 @@ public class Guardian {
 
     void onEvent(WatchEvent<?> event) {
         if (event.kind() == ENTRY_CREATE) {
-            System.out.println("Created: " + event.context().toString());
             tache.onCreate(event);
         }
         if (event.kind() == ENTRY_DELETE) {
-            System.out.println("Delete: " + event.context().toString());
             tache.onDelete(event);
         }
         if (event.kind() == ENTRY_MODIFY) {
-            System.out.println("Modify: " + event.context().toString());
             tache.onModify(event);
         }
     }
