@@ -113,6 +113,27 @@ public class GuardianTest {
     }
 
     @Test
+    public void a_guardian_must_fire_onCreate_events_more_than_on_if_more_taches() throws IOException {
+        Guardian guardian = Guardian.create();
+        Tache dummy = spy(new DummyTache(temporary_directory));
+        Tache dummy2 = spy(new DummyTache(temporary_directory));
+
+        WatchEvent<Path> createEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_CREATE);
+
+        guardian.registerTache(dummy);
+        guardian.registerTache(dummy2);
+        guardian.onEvent(createEvent);
+
+        verify(dummy).onCreate(createEvent);
+        verify(dummy, never()).onDelete(createEvent);
+        verify(dummy, never()).onModify(createEvent);
+
+        verify(dummy2).onCreate(createEvent);
+        verify(dummy2, never()).onDelete(createEvent);
+        verify(dummy2, never()).onModify(createEvent);
+    }
+
+    @Test
     public void a_guardian_must_fire_onDelete_events() throws IOException {
         Guardian guardian = spy(Guardian.create());
         Tache dummy = spy(new DummyTache(temporary_directory));

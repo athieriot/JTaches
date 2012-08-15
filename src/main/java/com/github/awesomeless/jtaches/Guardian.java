@@ -3,7 +3,9 @@ package com.github.awesomeless.jtaches;
 import java.io.IOException;
 import java.nio.file.*;
 import java.security.InvalidParameterException;
+import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 public class Guardian {
@@ -11,7 +13,7 @@ public class Guardian {
     private WatchService watchService;
     private WatchKey globalWatchKey;
 
-    private Tache tache;
+    private List<Tache> taches = newArrayList();
 
     public Guardian() throws IOException {
         FileSystem fileSystem = FileSystems.getDefault();
@@ -44,7 +46,7 @@ public class Guardian {
     }
     private WatchKey addTache(Tache tache) throws IOException {
         WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-        this.tache = tache;
+        this.taches.add(tache);
 
         //TODO: Better message
         System.out.println("Register tache: " + tache.toString());
@@ -52,7 +54,7 @@ public class Guardian {
     }
 
     public void watch() throws IOException, InterruptedException {
-        if(tache == null) {
+        if(taches.isEmpty()) {
             System.out.println("No task registered.");
         } else {
             waitingForEvents();
@@ -81,6 +83,12 @@ public class Guardian {
     }
 
     void onEvent(WatchEvent<?> event) {
+        for(Tache tache : taches) {
+            dispatchEvents(event, tache);
+        }
+    }
+
+    private void dispatchEvents(WatchEvent<?> event, Tache tache) {
         if (event.kind() == ENTRY_CREATE) {
             tache.onCreate(event);
         }
