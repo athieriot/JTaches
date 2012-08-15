@@ -1,17 +1,27 @@
 package com.github.awesomeless;
 
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.security.InvalidParameterException;
 
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 public class GuardianTest {
+
+    private Path temporary_directory;
+
+    @BeforeTest
+    public void setup() throws IOException {
+        temporary_directory = Files.createTempDirectory("_awesomeless");
+    }
 
     @Test
     public void a_guardian_must_be_create() throws IOException {
@@ -24,24 +34,45 @@ public class GuardianTest {
     }
 
     @Test
-    public void a_guardian_must_accept_path_registering() throws IOException {
-        WatchKey key = Guardian.create().register(get("."));
+    public void a_guardian_must_accept_tache_registering() throws IOException {
+        WatchKey key = Guardian.create().registerTache(new DummyTache(temporary_directory));
 
         assertNotNull(key);
         assertTrue(key.isValid());
     }
 
+    @Test
+    public void a_guardian_must_accept_null_tache_registering() throws IOException {
+        WatchKey key = Guardian.create().registerTache(null);
+
+        assertNull(key);
+    }
+
+    @Test(expectedExceptions = InvalidParameterException.class)
+    public void a_guardian_must_not_accept_null_path() throws IOException {
+        WatchKey key = Guardian.create().registerTache(new DummyTache(null));
+    }
+
+    @Test(timeOut = 500)
+    public void a_guardian_must_do_nothing_if_no_tache() throws IOException {
+        Guardian guardian = spy(Guardian.create());
+        guardian.registerTache(null);
+
+        guardian.watch();
+
+        verify(guardian, never()).onEvent(any(WatchEvent.class));
+    }
+
     @Test(timeOut = 2000)
     public void a_guardian_must_watch_true_file_creation() throws IOException {
         final Guardian guardian = spy(Guardian.create());
-        final Path temp = Files.createTempDirectory("_awesomeless");
 
         Thread creatorThread = new Thread(
             new Runnable() {
                 public void run() {
                     try {
                         Thread.sleep(500);
-                        createFile(get(temp.toString(), "areyouwatchingtome"));
+                        createFile(get(temporary_directory.toString(), "areyouwatchingtome"));
 
                         guardian.cancel();
                     } catch (InterruptedException | IOException e) {
@@ -52,47 +83,54 @@ public class GuardianTest {
         );
         creatorThread.start();
 
-        guardian.register(temp);
+        Tache dummy = spy(new DummyTache(temporary_directory));
+        guardian.registerTache(dummy);
         guardian.watch();
 
-        verify(guardian).onCreate(any(WatchEvent.class));
+        verify(dummy).onCreate(any(WatchEvent.class));
         verify(guardian, atLeastOnce()).cancel();
     }
 
     @Test
-    public void a_guardian_must_fire_onCreate_events() {
-        Guardian guardian = spy(Guardian.create());
+    public void a_guardian_must_fire_onCreate_events() throws IOException {
+        Guardian guardian = Guardian.create();
+        Tache dummy = spy(new DummyTache(temporary_directory));
         WatchEvent<Path> createEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_CREATE);
 
+        guardian.registerTache(dummy);
         guardian.onEvent(createEvent);
 
-        verify(guardian).onCreate(createEvent);
-        verify(guardian, never()).onDelete(createEvent);
-        verify(guardian, never()).onModify(createEvent);
+        verify(dummy).onCreate(createEvent);
+        verify(dummy, never()).onDelete(createEvent);
+        verify(dummy, never()).onModify(createEvent);
     }
 
     @Test
-    public void a_guardian_must_fire_onDelete_events() {
+    public void a_guardian_must_fire_onDelete_events() throws IOException {
         Guardian guardian = spy(Guardian.create());
+        Tache dummy = spy(new DummyTache(temporary_directory));
         WatchEvent<Path> deleteEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_DELETE);
 
+        guardian.registerTache(dummy);
         guardian.onEvent(deleteEvent);
 
-        verify(guardian, never()).onCreate(deleteEvent);
-        verify(guardian).onDelete(deleteEvent);
-        verify(guardian, never()).onModify(deleteEvent);
+        verify(dummy, never()).onCreate(deleteEvent);
+        verify(dummy).onDelete(deleteEvent);
+        verify(dummy, never()).onModify(deleteEvent);
     }
 
     @Test
-    public void a_guardian_must_fire_onModify_events() {
+    public void a_guardian_must_fire_onModify_events() throws IOException {
         Guardian guardian = spy(Guardian.create());
+        Tache dummy = spy(new DummyTache(temporary_directory));
         WatchEvent<Path> modifyEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_MODIFY);
 
+        guardian.registerTache(dummy);
         guardian.onEvent(modifyEvent);
 
-        verify(guardian, never()).onCreate(modifyEvent);
-        verify(guardian, never()).onDelete(modifyEvent);
-        verify(guardian).onModify(modifyEvent);
+        verify(dummy, never()).onCreate(modifyEvent);
+        verify(dummy, never()).onDelete(modifyEvent);
+        verify(dummy).onModify(modifyEvent);
     }
 
     private WatchEvent<Path> newWatchEvent(final WatchEvent.Kind<Path> kind) {

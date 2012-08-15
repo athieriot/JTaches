@@ -15,14 +15,16 @@
       <java.version>1.7</java.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-      <!-- Libraries -->
-      <!-- Tests -->
-      <testng.version>6.7</testng.version>
-      <mockito.version>1.9.5-rc1</mockito.version>
+       <!-- Libraries -->
+       <guava.version>13.0</guava.version>
 
-      <!-- Plugins -->
-      <maven.compiler.version>2.3.2</maven.compiler.version>
-      <exec.maven.version>1.2.1</exec.maven.version>
+       <!-- Tests -->
+       <testng.version>6.7</testng.version>
+       <mockito.version>1.9.5-rc1</mockito.version>
+
+       <!-- Plugins -->
+       <maven.compiler.version>2.3.2</maven.compiler.version>
+       <exec.maven.version>1.2.1</exec.maven.version>
    </properties>
 
    <build>
@@ -54,17 +56,25 @@
       </plugins>
    </build>
 
-   <dependencies>
-      <dependency>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-          <version>${testng.version}</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.mockito</groupId>
-          <artifactId>mockito-all</artifactId>
-          <version>${mockito.version}</version>
-      </dependency>
+    <dependencies>
+        <!-- Libraries -->
+        <dependency>
+           <groupId>com.google.guava</groupId>
+           <artifactId>guava</artifactId>
+           <version>${guava.version}</version>
+        </dependency>
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
    </dependencies>
 </project>
