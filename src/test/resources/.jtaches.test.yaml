@@ -1,2 +1,3 @@
-path: "."
-other: "ohyeah"
+DummyTache:
+  - path: "."
+  - other: "ohyeah"

@@ -29,10 +29,10 @@ public class Command {
 
     public static void executeMain(String [] args) throws IOException, InterruptedException {
         CommandArgs commandArgs = parseCommandLine(args);
-        Map<String, String> configurationMap = parseConfigurationFile(commandArgs.configurationFile);
+        Map<String, Map<String, String>> configurationMap = parseConfigurationFile(commandArgs.configurationFile);
 
         Guardian guardian = Guardian.create();
-        guardian.registerTache(new SysoutTache(configurationMap));
+        guardian.registerTache(new SysoutTache(configurationMap.get("SysoutTache")));
 
         if(!commandArgs.registerOnly) guardian.watch();
     }
@@ -44,7 +44,7 @@ public class Command {
         if(commandArgs.help) {jCommander.usage(); System.exit(0);}
         return commandArgs;
     }
-    private static Map<String, String> parseConfigurationFile(String configurationFile) throws FileNotFoundException {
+    private static Map<String, Map<String, String>> parseConfigurationFile(String configurationFile) throws FileNotFoundException {
         try {
             return yamlToMap(configurationFile);
         } catch(FileNotFoundException fnfe) {
