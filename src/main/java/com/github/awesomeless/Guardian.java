@@ -19,7 +19,6 @@ public class Guardian {
         FileSystem fileSystem = FileSystems.getDefault();
         watchService = fileSystem.newWatchService();
     }
-
     public static Guardian create() {
         try {
             return new Guardian();
@@ -32,11 +31,7 @@ public class Guardian {
         if(tache != null) {
             if(!isTacheValid(tache)) throw new InvalidParameterException("Tache not valid: " + tache);
 
-            WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-
-            this.tache = tache;
-            System.out.println("Register: " + tache.toString());
-            return key;
+            return addTache(tache);
         }
 
         return null;
@@ -45,28 +40,43 @@ public class Guardian {
     private boolean isTacheValid(Tache tache) {
         return tache.getPath() != null;
     }
+    private WatchKey addTache(Tache tache) throws IOException {
+        WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+        this.tache = tache;
+
+        System.out.println("Register: " + tache.toString());
+        return key;
+    }
 
     public void watch() {
         if(tache == null) {
             System.out.println("No task registered.");
         } else {
-            try {
-                globalWatchKey = watchService.take();
+            waitingForEvents();
+        }
+    }
+    public void cancel() {
+        globalWatchKey.cancel();
+    }
 
-                while (true) {
-                    for (final WatchEvent<?> event : globalWatchKey.pollEvents()) {
-                        onEvent(event);
-                    }
+    private void waitingForEvents() {
+        try {
+            globalWatchKey = watchService.take();
 
-                    if (!globalWatchKey.reset()) {
-                        System.out.println("Watcher no longer valid. Closing.");
-                        cancel();
-                        watchService.close();
-                        break;
-                    }
-                }
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
+            doBlockingLoop();
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void doBlockingLoop() throws IOException {
+        while (true) {
+            for (final WatchEvent<?> event : globalWatchKey.pollEvents()) {
+                onEvent(event);
+            }
+
+            if (!globalWatchKey.reset()) {
+                onCancel();
+                break;
             }
         }
     }
@@ -86,7 +96,9 @@ public class Guardian {
         }
     }
 
-    public void cancel() {
-        globalWatchKey.cancel();
+    private void onCancel() throws IOException {
+        System.out.println("Watcher no longer valid. Closing.");
+        cancel();
+        watchService.close();
     }
 }
