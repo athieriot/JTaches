@@ -63,7 +63,7 @@ public class GuardianTest {
         verify(guardian, never()).onEvent(any(WatchEvent.class));
     }
 
-    @Test(timeOut = 2000)
+    @Test(timeOut = 3000)
     public void a_guardian_must_watch_true_file_creation() throws IOException {
         final Guardian guardian = spy(Guardian.create());
 
