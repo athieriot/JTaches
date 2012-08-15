@@ -54,7 +54,7 @@ public class GuardianTest {
     }
 
     @Test(timeOut = 500)
-    public void a_guardian_must_do_nothing_if_no_tache() throws IOException {
+    public void a_guardian_must_do_nothing_if_no_tache() throws IOException, InterruptedException {
         Guardian guardian = spy(Guardian.create());
         guardian.registerTache(null);
 
@@ -64,7 +64,7 @@ public class GuardianTest {
     }
 
     @Test(timeOut = 2000)
-    public void a_guardian_must_watch_true_file_creation() throws IOException {
+    public void a_guardian_must_watch_true_file_creation() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
 
         Tache cancelling = spy(new Tache() {
@@ -72,7 +72,7 @@ public class GuardianTest {
             public void onCreate(WatchEvent<?> event) {
                 try {
                     guardian.cancel();
-                } catch (IOException e) {e.printStackTrace();}
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
             }
             public void onDelete(WatchEvent<?> event) {}
             public void onModify(WatchEvent<?> event) {}

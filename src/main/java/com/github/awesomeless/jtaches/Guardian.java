@@ -27,11 +27,15 @@ public class Guardian {
         }
     }
 
-    public WatchKey registerTache(Tache tache) throws IOException {
+    public WatchKey registerTache(Tache tache) throws InvalidParameterException {
         if(tache != null) {
             if(!isTacheValid(tache)) throw new InvalidParameterException("Tache not valid: " + tache);
 
-            return addTache(tache);
+            try {
+                return addTache(tache);
+            } catch (IOException e) {
+                throw new InvalidParameterException("An error occured when register the tache: " + tache);
+            }
         }
 
         return null;
@@ -45,11 +49,11 @@ public class Guardian {
         this.tache = tache;
 
         //TODO: Better message
-        System.out.println("Registered tache: " + tache.toString());
+        System.out.println("Register tache: " + tache.toString());
         return key;
     }
 
-    public void watch() {
+    public void watch() throws IOException, InterruptedException {
         if(tache == null) {
             System.out.println("No task registered.");
         } else {
@@ -60,14 +64,10 @@ public class Guardian {
         watchService.close();
     }
 
-    private void waitingForEvents() {
-        try {
-            globalWatchKey = watchService.take();
+    private void waitingForEvents() throws IOException, InterruptedException {
+        globalWatchKey = watchService.take();
 
-            doBlockingLoop();
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-        }
+        doBlockingLoop();
     }
     private void doBlockingLoop() throws IOException {
         while (true) {

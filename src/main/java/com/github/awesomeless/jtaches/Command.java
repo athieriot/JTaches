@@ -17,13 +17,15 @@ public class Command {
             executeMain(args);
 
         } catch (IOException ioe) {
-            System.out.println("A problem occured when initialize guardian: " + ioe.getMessage());
+            System.out.println("A problem occured with guardian: " + ioe.getMessage());
         } catch (InvalidParameterException ipe) {
-            System.out.println("Invalid tache detected: " + ipe.getMessage());
+            System.out.println("There is a problem with a tache: " + ipe.getMessage());
+        } catch (InterruptedException ie) {
+            System.out.println("The guardian was interrupted by something: " + ie.getMessage());
         }
     }
 
-    public static void executeMain(String [] args) throws IOException {
+    public static void executeMain(String [] args) throws IOException, InterruptedException {
         CommandArgs commandArgs = parseCommandLine(args);
 
         Guardian guardian = Guardian.create();
