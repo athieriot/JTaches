@@ -44,7 +44,7 @@ public class Guardian {
         WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
         this.tache = tache;
 
-        System.out.println("Register: " + tache.toString());
+        System.out.println("Registered tache: " + tache.toString());
         return key;
     }
 
@@ -55,8 +55,8 @@ public class Guardian {
             waitingForEvents();
         }
     }
-    public void cancel() {
-        globalWatchKey.cancel();
+    public void cancel() throws IOException {
+        watchService.close();
     }
 
     private void waitingForEvents() {
@@ -98,7 +98,7 @@ public class Guardian {
 
     private void onCancel() throws IOException {
         System.out.println("Watcher no longer valid. Closing.");
+        globalWatchKey.cancel();
         cancel();
-        watchService.close();
     }
 }

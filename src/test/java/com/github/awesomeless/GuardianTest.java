@@ -50,7 +50,7 @@ public class GuardianTest {
 
     @Test(expectedExceptions = InvalidParameterException.class)
     public void a_guardian_must_not_accept_null_path() throws IOException {
-        WatchKey key = Guardian.create().registerTache(new DummyTache(null));
+        Guardian.create().registerTache(new DummyTache(null));
     }
 
     @Test(timeOut = 500)
@@ -63,7 +63,7 @@ public class GuardianTest {
         verify(guardian, never()).onEvent(any(WatchEvent.class));
     }
 
-    @Test(timeOut = 5000)
+    @Test(timeOut = 2000)
     public void a_guardian_must_watch_true_file_creation() throws IOException {
         final Guardian guardian = spy(Guardian.create());
         Tache dummy = spy(new DummyTache(temporary_directory));
