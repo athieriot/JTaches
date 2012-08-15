@@ -1,7 +1,6 @@
 package com.github.awesomeless.jtaches;
 
 import com.beust.jcommander.JCommander;
-import com.github.awesomeless.jtaches.Guardian;
 import com.github.awesomeless.jtaches.command.CommandArgs;
 import com.github.awesomeless.jtaches.taches.SysoutTache;
 

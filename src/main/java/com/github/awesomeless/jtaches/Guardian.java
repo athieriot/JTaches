@@ -29,12 +29,12 @@ public class Guardian {
 
     public WatchKey registerTache(Tache tache) throws InvalidParameterException {
         if(tache != null) {
-            if(!isTacheValid(tache)) throw new InvalidParameterException("Tache not valid: " + tache);
+            if(!isTacheValid(tache)) throw new InvalidParameterException("Tache not valid: " + tacheToString(tache));
 
             try {
                 return addTache(tache);
             } catch (IOException e) {
-                throw new InvalidParameterException("An error occured when register the tache: " + tache);
+                throw new InvalidParameterException("An error occured when register the tache: " + tacheToString(tache));
             }
         }
 
@@ -44,12 +44,14 @@ public class Guardian {
     private boolean isTacheValid(Tache tache) {
         return tache.getPath() != null;
     }
+    private String tacheToString(Tache tache) {
+        return tache.getClass().getSimpleName() + " watching on directory: " + tache.getPath();
+    }
     private WatchKey addTache(Tache tache) throws IOException {
         WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
         this.taches.add(tache);
 
-        //TODO: Better message
-        System.out.println("Register tache: " + tache.toString());
+        System.out.println("Register tache: " + tacheToString(tache));
         return key;
     }
 

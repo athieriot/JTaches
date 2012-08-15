@@ -124,6 +124,7 @@ public class GuardianTest {
         guardian.registerTache(dummy2);
         guardian.onEvent(createEvent);
 
+        //TODO: Tests deserve a refactor
         verify(dummy).onCreate(createEvent);
         verify(dummy, never()).onDelete(createEvent);
         verify(dummy, never()).onModify(createEvent);
