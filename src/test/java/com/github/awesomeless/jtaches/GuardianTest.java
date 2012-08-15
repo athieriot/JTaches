@@ -1,4 +1,4 @@
-package com.github.awesomeless;
+package com.github.awesomeless.jtaches;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -8,7 +8,6 @@ import java.nio.file.*;
 import java.security.InvalidParameterException;
 
 import static java.nio.file.Files.createFile;
-import static java.nio.file.Files.exists;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;

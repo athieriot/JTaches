@@ -1,9 +1,8 @@
-package com.github.awesomeless;
+package com.github.awesomeless.jtaches;
 
-import com.google.common.collect.Lists;
+import com.github.awesomeless.jtaches.Tache;
 
 import java.nio.file.*;
-import java.util.Collection;
 
 public class DummyTache implements Tache {
 

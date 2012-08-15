@@ -17,6 +17,7 @@
 
        <!-- Libraries -->
        <guava.version>13.0</guava.version>
+       <jcommander.version>1.29</jcommander.version>
 
        <!-- Tests -->
        <testng.version>6.7</testng.version>
@@ -50,7 +51,7 @@
                </execution>
             </executions>
             <configuration>
-               <mainClass>com.github.awesomeless.Command</mainClass>
+               <mainClass>com.github.awesomeless.jtaches.Command</mainClass>
             </configuration>
          </plugin>
       </plugins>
@@ -62,6 +63,11 @@
            <groupId>com.google.guava</groupId>
            <artifactId>guava</artifactId>
            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>${jcommander.version}</version>
         </dependency>
         <!-- Tests -->
         <dependency>

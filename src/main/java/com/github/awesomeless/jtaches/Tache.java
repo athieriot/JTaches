@@ -1,4 +1,4 @@
-package com.github.awesomeless;
+package com.github.awesomeless.jtaches;
 
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;

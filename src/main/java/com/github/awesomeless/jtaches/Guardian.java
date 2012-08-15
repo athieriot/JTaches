@@ -1,4 +1,4 @@
-package com.github.awesomeless;
+package com.github.awesomeless.jtaches;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -44,6 +44,7 @@ public class Guardian {
         WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
         this.tache = tache;
 
+        //TODO: Better message
         System.out.println("Registered tache: " + tache.toString());
         return key;
     }
