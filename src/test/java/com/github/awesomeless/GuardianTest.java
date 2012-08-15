@@ -8,6 +8,7 @@ import java.nio.file.*;
 import java.security.InvalidParameterException;
 
 import static java.nio.file.Files.createFile;
+import static java.nio.file.Files.exists;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;
@@ -66,28 +67,35 @@ public class GuardianTest {
     @Test(timeOut = 2000)
     public void a_guardian_must_watch_true_file_creation() throws IOException {
         final Guardian guardian = spy(Guardian.create());
-        Tache dummy = spy(new DummyTache(temporary_directory));
+
+        Tache cancelling = spy(new Tache() {
+            public Path getPath() {return temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {e.printStackTrace();}
+            }
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        });
+        guardian.registerTache(cancelling);
 
         Thread creatorThread = new Thread(
             new Runnable() {
                 public void run() {
-                    try {
-                        Thread.sleep(1000);
-                        createFile(get(temporary_directory.toString(), "areyouwatchingtome"));
-
-                        guardian.cancel();
-                    } catch (InterruptedException | IOException e) {
-                        e.printStackTrace();
+                    while(true) {
+                        try {
+                            createFile(get(temporary_directory.toString(), "areyouwatchingtome"));
+                        } catch (IOException e) {}
                     }
                 }
             }
         );
         creatorThread.start();
 
-        guardian.registerTache(dummy);
         guardian.watch();
 
-        verify(dummy).onCreate(any(WatchEvent.class));
+        verify(cancelling).onCreate(any(WatchEvent.class));
         verify(guardian, atLeastOnce()).cancel();
     }
 
