@@ -52,7 +52,7 @@ public class GuardianTest {
         Guardian.create().registerTache(new DummyTache(null));
     }
 
-    @Test(timeOut = 500)
+    @Test(timeOut = 1000)
     public void a_guardian_must_do_nothing_if_no_tache() throws IOException, InterruptedException {
         Guardian guardian = spy(Guardian.create());
         guardian.registerTache(null);

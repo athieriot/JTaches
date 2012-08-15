@@ -2,16 +2,15 @@ package com.github.awesomeless.jtaches;
 
 import com.beust.jcommander.JCommander;
 import com.github.awesomeless.jtaches.command.CommandArgs;
-import com.github.awesomeless.jtaches.taches.SysoutTache;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.util.Map;
 
 import static com.github.awesomeless.jtaches.command.Configuration.yamlToMap;
+import static com.github.awesomeless.jtaches.utils.TacheUtils.constructionByReflection;
 
 public class Command {
 
@@ -54,18 +53,6 @@ public class Command {
         }
 
         return null;
-    }
-    static Tache constructionByReflection(String key, Map<String, String> configuration) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        Class clazz = Class.forName(key);
-
-        //TODO: Need to support more constructors
-        try {
-            Constructor constructor = clazz.getConstructor(Map.class);
-            return (Tache) constructor.newInstance(configuration);
-
-        } catch(NoSuchMethodException e) {
-            return (Tache) clazz.newInstance();
-        }
     }
 
     private static CommandArgs parseCommandLine(String[] args) {

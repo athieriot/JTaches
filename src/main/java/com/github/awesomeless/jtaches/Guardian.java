@@ -5,6 +5,7 @@ import java.nio.file.*;
 import java.security.InvalidParameterException;
 import java.util.List;
 
+import static com.github.awesomeless.jtaches.utils.TacheUtils.tacheToString;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -40,13 +41,10 @@ public class Guardian {
 
         return null;
     }
-
     private boolean isTacheValid(Tache tache) {
         return tache.getPath() != null;
     }
-    private String tacheToString(Tache tache) {
-        return tache.getClass().getSimpleName() + " watching on directory: " + tache.getPath();
-    }
+
     private WatchKey addTache(Tache tache) throws IOException {
         WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
         this.taches.add(tache);

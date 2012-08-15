@@ -1,7 +1,5 @@
 package com.github.awesomeless.jtaches;
 
-import com.github.awesomeless.jtaches.taches.internal.ConfiguredTache;
-
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 

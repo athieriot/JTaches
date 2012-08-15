@@ -19,6 +19,7 @@ public class Configuration {
     public static Map<String, Map<String, String>> yamlToMap(String configurationFile) throws FileNotFoundException {
         Yaml yaml = new Yaml();
 
+        //TODO: Must find a way to accept more than one instance of the same tache
         return transformValues(
             (Map<String, List<Map<String, String>>>) yaml.load(new FileInputStream(new File(configurationFile))),
             new Function<List<Map<String, String>>, Map<String, String>>() {
