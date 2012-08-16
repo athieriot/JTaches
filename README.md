@@ -1,7 +1,7 @@
 JTaches
 =======
 
-[![Build Status](https://secure.travis-ci.org/Awesomeless/JTaches.png)](http://travis-ci.org/Awesomeless/JTaches)
+[![Build Status](https://secure.travis-ci.org/aurelien/JTaches.png)](http://travis-ci.org/aurelien/JTaches)
 
 About
 -----
@@ -13,7 +13,7 @@ Sources
 -------
 
 Until we find a better way to deploy it, you have to compile JTaches yourself.
-Download the sources via git or directly: https://github.com/Awesomeless/JTaches/tarball/master
+Download the sources via git or directly: https://github.com/aurelien/JTaches/tarball/master
 
 mvn clean install
 
