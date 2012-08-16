@@ -32,6 +32,7 @@ public class CopyTache extends ConfiguredTache {
         Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));
 
         try {
+            System.out.println("Deleting file: " + to.toString());
             delete(to);
         } catch (IOException e) {
             System.out.println("Unable to delete file: " + e.getMessage());
@@ -51,6 +52,7 @@ public class CopyTache extends ConfiguredTache {
         Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));
 
         try {
+            System.out.println("Copying file: " + to.toString());
             copy(from, to, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             System.out.println("Unable to copy file: " + e.getMessage());

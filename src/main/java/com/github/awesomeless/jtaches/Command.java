@@ -36,8 +36,9 @@ public class Command {
         for(String key : configurationMap.keySet()) {
             Tache newTache = buildNewTache(key, configurationMap.get(key));
 
-            //- If a tache is invalid, the program quit
-            //- If the configuration file reference a non existing class, the guardian skip it
+            /*- If a tache is invalid, the program quit
+              - If the configuration file reference a non existing class, the guardian skip it
+            */
             guardian.registerTache(newTache);
         }
 
