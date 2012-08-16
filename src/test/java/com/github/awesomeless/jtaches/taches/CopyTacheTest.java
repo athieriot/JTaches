@@ -1,18 +1,12 @@
 package com.github.awesomeless.jtaches.taches;
 
 import com.github.awesomeless.jtaches.Tache;
-import com.github.awesomeless.jtaches.utils.TestUtils;
-import com.google.common.io.Files;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.security.InvalidParameterException;
 import java.util.Map;
 
 import static com.github.awesomeless.jtaches.command.Configuration.CONFIGURATION_PATH;
@@ -20,11 +14,9 @@ import static com.github.awesomeless.jtaches.taches.CopyTache.CONFIGURATION_COPY
 import static com.github.awesomeless.jtaches.utils.TestUtils.newWatchEvent;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.io.Files.copy;
-import static com.google.common.io.Files.map;
+import static com.google.common.io.Files.createTempDir;
 import static java.nio.file.Paths.get;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -32,8 +24,8 @@ import static org.testng.Assert.assertTrue;
 public class CopyTacheTest {
 
     private final Map<String,String> map = newHashMap();
-    private final File fromTemp = Files.createTempDir();
-    private final File toTemp = Files.createTempDir();
+    private final File fromTemp = createTempDir();
+    private final File toTemp = createTempDir();
 
     @BeforeTest
     public void setup() {

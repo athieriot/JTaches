@@ -1,5 +1,11 @@
 com.github.awesomeless.jtaches.taches.SysoutTache:
   - path: "."
+
 com.github.awesomeless.jtaches.taches.CopyTache:
   - path: "."
   - copyTo: "target/"
+
+com.github.awesomeless.jtaches.taches.ScriptTache:
+  - path: "."
+  - script: "notify-send <file>/<event>"
+  - workingDirectory: "."

@@ -1,18 +1,14 @@
 package com.github.awesomeless.jtaches.utils;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 
 import static com.github.awesomeless.jtaches.utils.TestUtils.newWatchEvent;
 import static java.nio.file.Paths.get;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class TestUtilsTest {
 

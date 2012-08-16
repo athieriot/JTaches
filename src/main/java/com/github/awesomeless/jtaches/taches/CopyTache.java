@@ -1,11 +1,11 @@
 package com.github.awesomeless.jtaches.taches;
 
-import com.github.awesomeless.jtaches.command.Configuration;
 import com.github.awesomeless.jtaches.taches.internal.ConfiguredTache;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.WatchEvent;
 import java.util.Map;
 
 import static com.github.awesomeless.jtaches.command.Configuration.CONFIGURATION_PATH;
