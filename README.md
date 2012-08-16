@@ -1,7 +1,7 @@
 JTaches
 =======
 
-[![Build Status](https://secure.travis-ci.org/aurelien/JTaches.png)](http://travis-ci.org/aurelien/JTaches)
+[![Build Status](https://secure.travis-ci.org/athieriot/JTaches.png)](http://travis-ci.org/athieriot/JTaches)
 
 About
 -----
@@ -13,7 +13,7 @@ Sources
 -------
 
 Until we find a better way to deploy it, you have to compile JTaches yourself.
-Download the sources via git or directly: https://github.com/aurelien/JTaches/tarball/master
+Download the sources via git or directly: https://github.com/athieriot/JTaches/tarball/master
 
 mvn clean install
 
