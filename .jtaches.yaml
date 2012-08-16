@@ -1,2 +1,5 @@
 com.github.awesomeless.jtaches.taches.SysoutTache:
   - path: "."
+com.github.awesomeless.jtaches.taches.CopyTache:
+  - path: "."
+  - copyTo: "target/"

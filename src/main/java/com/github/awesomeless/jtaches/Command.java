@@ -49,7 +49,7 @@ public class Command {
             return constructionByReflection(key, configuration);
 
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | InvocationTargetException e) {
-            System.out.println("Unable to build a tache for this configuration: " + key);
+            System.out.println("Unable to build a tache for this configuration: " + key + " - " + e.getMessage());
         }
 
         return null;
