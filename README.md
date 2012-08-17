@@ -23,7 +23,7 @@ Usage
 -----
 
 You have to provide a configuration file.
-By default, the program look for *.jtaches.yaml* in the current directory but you can override it from the command line.
+By default, the program look for **.jtaches.yaml** in the current directory but you can override it from the command line.
 
         ./jtaches -file whatever.yaml
 
@@ -42,14 +42,14 @@ Taches
 
 For now, you have access to three Taches:
 
-+ com.github.awesomeless.jtaches.taches.SysoutTache : Display envent details in the console.
++ **com.github.awesomeless.jtaches.taches.SysoutTache** : Display envent details in the console.
     - "path", the directory to watch
 
-+ com.github.awesomeless.jtaches.taches.CopyTache : Copy watched files to another location.
++ **com.github.awesomeless.jtaches.taches.CopyTache** : Copy watched files to another location.
     - "path", the directory to watch
     - "copyTo", where to copy the files
 
-+ com.github.awesomeless.jtaches.taches.ScriptTache : Display envent details in the console.
++ **com.github.awesomeless.jtaches.taches.ScriptTache** : Display envent details in the console.
     - "path", the directory to watch
     - "script", the script to execute (Patterns '<path>', '<file>' and '<event>' while be replaced by real values)
     - "workingDirectory", the working dir where to execute the script (optional)
