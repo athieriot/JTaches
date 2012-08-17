@@ -26,8 +26,9 @@ abstract public class ConfiguredTache implements Tache {
     }
 
     private void validateConfiguredTache(Map<String, String> configuration, List<String> mandatories) {
-        if(!validateConfiguration(configuration, loadedWithDefaultValues(mandatories))) {
-            throw new InvalidParameterException();
+       List<String> allMandatories = loadedWithDefaultValues(mandatories);
+       if(!validateConfiguration(configuration, allMandatories)) {
+            throw new InvalidParameterException("An error occured while creating the task. Configuration invalid: " + allMandatories.toString() + " needed.");
         }
     }
     boolean validateConfiguration(Map<String, String> configuration, List<String> mandatories) {

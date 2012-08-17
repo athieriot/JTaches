@@ -51,6 +51,8 @@ public class Command {
 
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | InvocationTargetException e) {
             System.out.println("Unable to build a tache for this configuration: " + key + " - " + e.getMessage());
+            if(e.getCause() != null)
+               System.out.println(e.getCause().getMessage());
         }
 
         return null;

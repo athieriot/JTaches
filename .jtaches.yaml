@@ -7,5 +7,4 @@ com.github.awesomeless.jtaches.taches.CopyTache:
 
 com.github.awesomeless.jtaches.taches.ScriptTache:
   - path: "."
-  - script: "notify-send path/<file>/<event>"
-  - workingDirectory: "."
+  - script: "notify-send <path>/<file>/<event>"
