@@ -1,10 +1,10 @@
-com.github.awesomeless.jtaches.taches.SysoutTache:
+com.github.athieriot.jtaches.taches.SysoutTache:
   - path: "."
 
-com.github.awesomeless.jtaches.taches.CopyTache:
+com.github.athieriot.jtaches.taches.CopyTache:
   - path: "."
   - copyTo: "target/"
 
-com.github.awesomeless.jtaches.taches.ScriptTache:
+com.github.athieriot.jtaches.taches.ScriptTache:
   - path: "."
   - script: "notify-send <path>/<file>/<event>"
