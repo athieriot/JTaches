@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.util.Map;
 
@@ -29,8 +30,8 @@ public class ScriptTacheTest {
 
     @BeforeTest
     public void setup() {
+        map.put(CONFIGURATION_SCRIPT, "ls");
         map.put(CONFIGURATION_PATH, path.getAbsolutePath());
-        map.put(CONFIGURATION_WORKING_DIRECTORY, ".");
     }
 
     @Test
@@ -48,6 +49,7 @@ public class ScriptTacheTest {
     @Test
     public void script_tache_must_execute_a_script() throws IOException, InterruptedException {
         map.put(CONFIGURATION_SCRIPT, "mv <path>/<file> <path>/<event>");
+        map.put(CONFIGURATION_WORKING_DIRECTORY, ".");
         File file = new File(path.toString() + "/test");
         file.createNewFile();
 

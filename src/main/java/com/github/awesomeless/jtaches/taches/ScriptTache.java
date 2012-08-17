@@ -14,12 +14,13 @@ public class ScriptTache extends ConfiguredTache {
     public static final String CONFIGURATION_SCRIPT = "script";
     public static final String CONFIGURATION_WORKING_DIRECTORY = "workingDirectory";
 
+    //CLEANUP: Enumeration or List
     private final String FILE_REPLACEMENT = "<file>";
     private final String PATH_REPLACEMENT = "<path>";
     private final String EVENT_REPLACEMENT = "<event>";
 
     public ScriptTache(Map<String, String> configuration) {
-        super(configuration);
+        super(configuration, CONFIGURATION_SCRIPT);
     }
 
     @Override
@@ -41,12 +42,13 @@ public class ScriptTache extends ConfiguredTache {
         executeScript(new File(getConfiguration().get(CONFIGURATION_PATH) + "/" + event.context().toString()), event.kind().name());
     }
     private void executeScript(File file, String event) {
-        File workingDirectory = new File(getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY));
         String script = manufacturingScript(file, event);
 
-        System.out.println("Executing script: " + script + " on directory: " + workingDirectory);
+        ProcessBuilder processBuilder = new ProcessBuilder().command(script.split(" "));
+        if (getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY) != null)
+            processBuilder.directory(new File(getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY)));
 
-        ProcessBuilder processBuilder = new ProcessBuilder().command(script.split(" ")).directory(workingDirectory);
+        System.out.println("Executing script: " + script);
         try {
             processBuilder.start();
         } catch (IOException e) {

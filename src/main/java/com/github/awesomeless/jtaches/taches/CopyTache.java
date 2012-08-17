@@ -17,9 +17,8 @@ public class CopyTache extends ConfiguredTache {
 
     public static final String CONFIGURATION_COPY_TO = "copyTo";
 
-    //TODO: Configuration verification
     public CopyTache(Map<String, String> configuration) {
-        super(configuration);
+        super(configuration, CONFIGURATION_COPY_TO);
     }
 
     @Override
