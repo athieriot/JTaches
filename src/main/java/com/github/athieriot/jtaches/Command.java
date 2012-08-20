@@ -2,15 +2,16 @@ package com.github.athieriot.jtaches;
 
 import com.beust.jcommander.JCommander;
 import com.github.athieriot.jtaches.command.CommandArgs;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
-import java.util.Map;
+import java.util.List;
 
 import static com.github.athieriot.jtaches.command.Configuration.yamlToMap;
-import static com.github.athieriot.jtaches.utils.TacheUtils.constructionByReflection;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 public class Command {
 
@@ -20,42 +21,35 @@ public class Command {
 
         } catch (IOException ioe) {
             System.out.println("A problem occured with guardian: " + ioe.getMessage());
+            System.exit(1);
         } catch (InvalidParameterException ipe) {
             System.out.println("There is a problem with a tache: " + ipe.getMessage());
+            System.exit(1);
         } catch (InterruptedException ie) {
             System.out.println("The guardian was interrupted by something: " + ie.getMessage());
+            System.exit(1);
+        } catch (YAMLException ye) {
+            System.out.println("Unable to build a tache for this configuration:");
+            System.out.println("\t - " + ye.getMessage());
+            System.out.println("\t - " + getRootCauseMessage(ye));
+            System.exit(1);
         }
     }
 
     public static void executeMain(String [] args) throws IOException, InterruptedException {
         CommandArgs commandArgs = parseCommandLine(args);
-        Map<String, Map<String, String>> configurationMap = parseConfigurationFile(commandArgs.configurationFile);
+        List<Tache> taches = parseConfigurationFile(commandArgs.configurationFile);
 
         Guardian guardian = Guardian.create();
 
-        for(String key : configurationMap.keySet()) {
-            Tache newTache = buildNewTache(key, configurationMap.get(key));
-
+        for(Tache tache : taches) {
             /*- If a tache is invalid, the program quit
               - If the configuration file reference a non existing class, the guardian skip it
             */
-            guardian.registerTache(newTache);
+            guardian.registerTache(tache);
         }
 
         if(!commandArgs.registerOnly) guardian.watch();
-    }
-
-    private static Tache buildNewTache(String key, Map<String, String> configuration) {
-        try {
-            return constructionByReflection(key, configuration);
-
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | InvocationTargetException e) {
-            System.out.println("Unable to build a tache for this configuration: " + key + " - " + e.getMessage());
-            if(e.getCause() != null)
-               System.out.println(e.getCause().getMessage());
-        }
-
-        return null;
     }
 
     private static CommandArgs parseCommandLine(String[] args) {
@@ -65,7 +59,7 @@ public class Command {
         if(commandArgs.help) {jCommander.usage(); System.exit(0);}
         return commandArgs;
     }
-    private static Map<String, Map<String, String>> parseConfigurationFile(String configurationFile) throws FileNotFoundException {
+    private static List<Tache> parseConfigurationFile(String configurationFile) {
         try {
             return yamlToMap(configurationFile);
         } catch(FileNotFoundException fnfe) {
@@ -73,6 +67,6 @@ public class Command {
             System.exit(1);
         }
 
-        return null;
+        return newArrayList();
     }
 }

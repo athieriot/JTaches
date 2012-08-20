@@ -5,7 +5,6 @@ import java.nio.file.*;
 import java.security.InvalidParameterException;
 import java.util.List;
 
-import static com.github.athieriot.jtaches.utils.TacheUtils.tacheToString;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -43,6 +42,9 @@ public class Guardian {
     }
     private boolean isTacheValid(Tache tache) {
         return tache.getPath() != null;
+    }
+    private String tacheToString(Tache tache) {
+        return tache.getClass().getSimpleName() + " watching on directory: " + tache.getPath();
     }
 
     private WatchKey addTache(Tache tache) throws IOException {

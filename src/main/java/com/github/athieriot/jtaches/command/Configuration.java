@@ -1,39 +1,36 @@
 package com.github.athieriot.jtaches.command;
 
-import com.google.common.base.Function;
+import com.github.athieriot.jtaches.Tache;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.security.InvalidParameterException;
 import java.util.List;
-import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Lists.newArrayList;
 
 public class Configuration {
 
     public final static String CONFIGURATION_PATH = "path";
 
-    public static Map<String, Map<String, String>> yamlToMap(String configurationFile) throws FileNotFoundException {
+    public static List<Tache> yamlToMap(String configurationFile) throws FileNotFoundException {
         Yaml yaml = new Yaml();
 
-        //TODO: Must find a way to accept more than one instance of the same tache
-        return transformValues(
-            (Map<String, List<Map<String, String>>>) yaml.load(new FileInputStream(new File(configurationFile))),
-            new Function<List<Map<String, String>>, Map<String, String>>() {
-                @Override
-                public Map<String, String> apply(List<Map<String, String>> hardConfiguration) {
-                    Map<String, String> tempMap = newHashMap();
+        List objects = (List) yaml.load(new FileInputStream(new File(configurationFile)));
 
-                    for(Map<String, String> hardMap : hardConfiguration) {
-                        tempMap.putAll(hardMap);
-                    }
+        if(null == objects) return newArrayList();
+        verifyInstances(objects);
 
-                    return tempMap;
-                }
+        return (List<Tache>) objects;
+    }
+
+    private static void verifyInstances(List objects) {
+        for (Object o : objects) {
+            if(!(o instanceof Tache)) {
+                throw new InvalidParameterException("Only instances of Tache are allowed: " + o.getClass().getCanonicalName());
             }
-        );
+        }
     }
 }

@@ -49,7 +49,7 @@ public class GuardianTest {
 
     @Test(expectedExceptions = InvalidParameterException.class)
     public void a_guardian_must_not_accept_null_path() throws IOException {
-        Guardian.create().registerTache(new DummyTache(null));
+        Guardian.create().registerTache(new DummyTache());
     }
 
     @Test(timeOut = 1000)
