@@ -48,7 +48,7 @@ public class ScriptTache extends ConfiguredTache {
         if (getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY) != null) {
             processBuilder.directory(new File(getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY)));
         }
-        
+
         System.out.println("Executing script: " + script);
         try {
             processBuilder.start();

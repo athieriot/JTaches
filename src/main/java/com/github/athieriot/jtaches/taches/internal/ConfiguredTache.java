@@ -12,7 +12,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.Paths.get;
 import static java.util.Arrays.asList;
 
-abstract public class ConfiguredTache implements Tache {
+public abstract class ConfiguredTache implements Tache {
 
     private Map<String, String> configuration;
 

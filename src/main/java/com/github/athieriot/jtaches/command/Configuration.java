@@ -13,7 +13,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public enum Configuration {;
 
-    public final static String CONFIGURATION_PATH = "path";
+    public static final String CONFIGURATION_PATH = "path";
 
     public static List<Tache> yamlToMap(String configurationFile) throws FileNotFoundException {
         Yaml yaml = new Yaml();
