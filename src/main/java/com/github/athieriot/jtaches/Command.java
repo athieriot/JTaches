@@ -24,7 +24,6 @@ public enum Command {;
 
         } catch (IOException ioe) {
             //TODO: Talk about loader in documentation
-            //TODO: Customizing log format
             info("A problem occured with guardian: " + ioe.getMessage(), ioe);
             System.exit(1);
         } catch (InvalidParameterException ipe) {
@@ -43,7 +42,7 @@ public enum Command {;
 
     public static void executeMain(String [] args) throws IOException, InterruptedException {
         CommandArgs commandArgs = parseCommandLine(args);
-        initializeLogger(commandArgs);
+        initializeLogger(commandArgs, new ConsoleLogger());
 
         List<Tache> taches = parseConfigurationFile(commandArgs.getConfigurationFile());
         keepWatching(commandArgs, taches);
@@ -71,8 +70,8 @@ public enum Command {;
         if(commandArgs.hasHelp()) {jCommander.usage(); System.exit(0);}
         return commandArgs;
     }
-    private static void initializeLogger(CommandArgs commandArgs) {
-        Log.setLogger(new ConsoleLogger());
+    public static void initializeLogger(CommandArgs commandArgs, Log.Logger logger) {
+        Log.setLogger(logger);
         if(commandArgs.isVerbose()) {
             Log.set(LEVEL_DEBUG);
             debug("==Verbose mode activated==");
