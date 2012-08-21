@@ -45,9 +45,10 @@ public class ScriptTache extends ConfiguredTache {
         String script = manufacturingScript(file, event);
 
         ProcessBuilder processBuilder = new ProcessBuilder().command(script.split(" "));
-        if (getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY) != null)
+        if (getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY) != null) {
             processBuilder.directory(new File(getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY)));
-
+        }
+        
         System.out.println("Executing script: " + script);
         try {
             processBuilder.start();

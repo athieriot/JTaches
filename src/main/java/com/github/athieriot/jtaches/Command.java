@@ -49,7 +49,9 @@ public enum Command {;
             guardian.registerTache(tache);
         }
 
-        if(!commandArgs.isRegisterOnly()) guardian.watch();
+        if(!commandArgs.isRegisterOnly()) {
+            guardian.watch();
+        }
     }
 
     private static CommandArgs parseCommandLine(String[] args) {

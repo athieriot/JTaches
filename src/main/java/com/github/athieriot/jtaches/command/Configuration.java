@@ -1,15 +1,15 @@
 package com.github.athieriot.jtaches.command;
 
-import static com.google.common.collect.Lists.newArrayList;
+import com.github.athieriot.jtaches.Tache;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.security.InvalidParameterException;
 import java.util.List;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
-import com.github.athieriot.jtaches.Tache;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public enum Configuration {;
 
@@ -19,7 +19,9 @@ public enum Configuration {;
         Yaml yaml = new Yaml();
         List objects = (List) yaml.load(new FileInputStream(new File(configurationFile)));
 
-        if(null == objects) return newArrayList();
+        if(null == objects) {
+            return newArrayList();
+        }
         verifyInstances(objects);
 
         return (List<Tache>) objects;

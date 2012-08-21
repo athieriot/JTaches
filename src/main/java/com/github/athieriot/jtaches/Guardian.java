@@ -29,7 +29,9 @@ public class Guardian {
 
     public WatchKey registerTache(Tache tache) throws InvalidParameterException {
         if(tache != null) {
-            if(!isTacheValid(tache)) throw new InvalidParameterException("Tache not valid: " + tacheToString(tache));
+            if(!isTacheValid(tache)) {
+                throw new InvalidParameterException("Tache not valid: " + tacheToString(tache));
+            }
 
             try {
                 return addTache(tache);
