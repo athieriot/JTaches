@@ -38,7 +38,7 @@ public class Command {
 
     public static void executeMain(String [] args) throws IOException, InterruptedException {
         CommandArgs commandArgs = parseCommandLine(args);
-        List<Tache> taches = parseConfigurationFile(commandArgs.configurationFile);
+        List<Tache> taches = parseConfigurationFile(commandArgs.getConfigurationFile());
 
         Guardian guardian = Guardian.create();
 
@@ -49,14 +49,14 @@ public class Command {
             guardian.registerTache(tache);
         }
 
-        if(!commandArgs.registerOnly) guardian.watch();
+        if(!commandArgs.isRegisterOnly()) guardian.watch();
     }
 
     private static CommandArgs parseCommandLine(String[] args) {
         CommandArgs commandArgs = new CommandArgs();
         JCommander jCommander = new JCommander(commandArgs, args);
 
-        if(commandArgs.help) {jCommander.usage(); System.exit(0);}
+        if(commandArgs.hasHelp()) {jCommander.usage(); System.exit(0);}
         return commandArgs;
     }
     private static List<Tache> parseConfigurationFile(String configurationFile) {
