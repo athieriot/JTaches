@@ -7,6 +7,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.StandardWatchEventKinds.*;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 public class Guardian {
 
@@ -36,7 +37,7 @@ public class Guardian {
             try {
                 return addTache(tache);
             } catch (IOException e) {
-                throw new InvalidParameterException("An error occured when register the tache: " + tacheToString(tache));
+                throw new InvalidParameterException("An error occured when register the tache " + tacheToString(tache) + ": " + getRootCauseMessage(e));
             }
         }
 
