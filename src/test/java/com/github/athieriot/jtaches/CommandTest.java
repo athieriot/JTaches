@@ -36,7 +36,7 @@ public class CommandTest {
         CommandArgs mockArgs = mock(CommandArgs.class);
         Log.Logger spyiedLogger = spy(new ConsoleLogger());
 
-        when(mockArgs.isVerbose()).thenReturn(true);
+        when(mockArgs.isVerbose()).thenReturn(false);
         initializeLogger(mockArgs, spyiedLogger);
 
         verify(spyiedLogger, never()).log(anyInt(), anyString(), anyString(), any(Throwable.class));
