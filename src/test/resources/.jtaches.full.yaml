@@ -1,0 +1,14 @@
+- !!com.github.athieriot.jtaches.taches.SysoutTache [{
+    path: "."
+}]
+
+- !!com.github.athieriot.jtaches.taches.CopyTache [{
+    path: ".",
+    copyTo: "./target"
+}]
+
+- !!com.github.athieriot.jtaches.taches.ScriptTache [{
+    path: ".",
+    script: "notify-send <path>/<file>/<event>",
+    workingDirectory: "."
+}]

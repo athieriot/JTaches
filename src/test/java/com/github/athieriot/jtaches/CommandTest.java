@@ -9,7 +9,9 @@ public class CommandTest {
     //TODO: Care this test suite and the coverage will be better
     @Test(timeOut = 2000)
     public void main_command_must_at_least_register_taches() throws Exception {
-        //String[] argv = { "--registerOnly" };
-        //executeMain(argv);
+      String testFile = getClass().getClassLoader().getResource(".jtaches.full.yaml").getFile();
+
+      String[] argv = { "--registerOnly", "--file", testFile};
+      executeMain(argv);
     }
 }

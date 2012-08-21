@@ -8,7 +8,7 @@ public class CommandArgs {
     public boolean registerOnly = false;
 
     @Parameter(names = {"-f", "--file"}, description = "Configuration file.")
-    public String configurationFile = ".jtaches.yaml";
+    public String configurationFile = ".jtaches.full.yaml";
 
     @Parameter(names = {"-h", "--help"}, description = "Display this help")
     public boolean help = false;
