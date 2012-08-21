@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.WatchEvent;
 import java.util.Map;
 
+import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.Configuration.CONFIGURATION_PATH;
 
 public class ScriptTache extends ConfiguredTache {
@@ -49,11 +50,11 @@ public class ScriptTache extends ConfiguredTache {
             processBuilder.directory(new File(getConfiguration().get(CONFIGURATION_WORKING_DIRECTORY)));
         }
 
-        System.out.println("Executing script: " + script);
+        info("Executing script: " + script);
         try {
             processBuilder.start();
         } catch (IOException e) {
-            System.out.println("Error executing the command: " + script + " - " + e.getMessage());
+            info("Error executing the command: " + script + " - " + e.getMessage(), e);
         }
     }
 

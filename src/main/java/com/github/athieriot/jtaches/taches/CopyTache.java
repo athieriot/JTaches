@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.WatchEvent;
 import java.util.Map;
 
+import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.Configuration.CONFIGURATION_PATH;
 import static java.nio.file.Files.copy;
 import static java.nio.file.Files.delete;
@@ -31,10 +32,10 @@ public class CopyTache extends ConfiguredTache {
         Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));
 
         try {
-            System.out.println("Deleting file: " + to.toString());
+            info("Deleting file: " + to.toString());
             delete(to);
         } catch (IOException e) {
-            System.out.println("Unable to delete file: " + e.getMessage());
+            info("Unable to delete file: " + e.getMessage(), e);
         }
     }
 
@@ -51,10 +52,10 @@ public class CopyTache extends ConfiguredTache {
         Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));
 
         try {
-            System.out.println("Copying file: " + to.toString());
+            info("Copying file: " + to.toString());
             copy(from, to, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            System.out.println("Unable to copy file: " + e.getMessage());
+            info("Unable to copy file: " + e.getMessage(), e);
         }
     }
 }

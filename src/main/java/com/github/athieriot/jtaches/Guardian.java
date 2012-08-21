@@ -5,6 +5,7 @@ import java.nio.file.*;
 import java.security.InvalidParameterException;
 import java.util.List;
 
+import static com.esotericsoftware.minlog.Log.info;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -54,13 +55,13 @@ public class Guardian {
         WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
         this.taches.add(tache);
 
-        System.out.println("Register tache: " + tacheToString(tache));
+        info("Register tache: " + tacheToString(tache));
         return key;
     }
 
     public void watch() throws IOException, InterruptedException {
         if(taches.isEmpty()) {
-            System.out.println("No task registered.");
+            info("No task registered.");
         } else {
             waitingForEvents();
         }
@@ -107,7 +108,7 @@ public class Guardian {
     }
 
     private void onCancel() throws IOException {
-        System.out.println("Watcher no longer valid. Closing.");
+        info("Watcher no longer valid. Closing.");
         globalWatchKey.cancel();
         cancel();
     }

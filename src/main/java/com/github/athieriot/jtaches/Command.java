@@ -1,7 +1,9 @@
 package com.github.athieriot.jtaches;
 
 import com.beust.jcommander.JCommander;
+import com.esotericsoftware.minlog.Log;
 import com.github.athieriot.jtaches.command.CommandArgs;
+import com.github.athieriot.jtaches.command.ConsoleLogger;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.FileNotFoundException;
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.List;
 
+import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.Configuration.yamlToMap;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -20,18 +23,20 @@ public enum Command {;
             executeMain(args);
 
         } catch (IOException ioe) {
-            System.out.println("A problem occured with guardian: " + ioe.getMessage());
+            //TODO: Talk about loader in documentation
+            //TODO: Customizing log format
+            info("A problem occured with guardian: " + ioe.getMessage(), ioe);
             System.exit(1);
         } catch (InvalidParameterException ipe) {
-            System.out.println("There is a problem with a tache: " + ipe.getMessage());
+            info("There is a problem with a tache: " + ipe.getMessage(), ipe);
             System.exit(1);
         } catch (InterruptedException ie) {
-            System.out.println("The guardian was interrupted by something: " + ie.getMessage());
+            info("The guardian was interrupted by something: " + ie.getMessage(), ie);
             System.exit(1);
         } catch (YAMLException ye) {
-            System.out.println("Unable to build a tache for this configuration:");
-            System.out.println("\t - " + ye.getMessage());
-            System.out.println("\t - " + getRootCauseMessage(ye));
+            info("Unable to build a tache for this configuration:");
+            info("\t - " + ye.getMessage());
+            info("\t - " + getRootCauseMessage(ye));
             System.exit(1);
         }
     }
@@ -65,7 +70,7 @@ public enum Command {;
         try {
             return yamlToMap(configurationFile);
         } catch(FileNotFoundException fnfe) {
-            System.out.println("Configuration file did not exists.");
+            info("Configuration file did not exists.", fnfe);
             System.exit(1);
         }
 
