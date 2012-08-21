@@ -73,6 +73,7 @@ public class Guardian {
     }
     private void doBlockingLoop() throws IOException {
         while (true) {
+            //TODO: React to the Overflow event
             for (final WatchEvent<?> event : globalWatchKey.pollEvents()) {
                 onEvent(event);
             }

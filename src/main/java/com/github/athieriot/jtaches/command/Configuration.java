@@ -16,7 +16,7 @@ public class Configuration {
     public final static String CONFIGURATION_PATH = "path";
 
     public static List<Tache> yamlToMap(String configurationFile) throws FileNotFoundException {
-        Yaml yaml = new Yaml(new CustomClassLoaderConstructor(Configuration.class.getClassLoader()));
+        Yaml yaml = new Yaml();
         List objects = (List) yaml.load(new FileInputStream(new File(configurationFile)));
 
         if(null == objects) return newArrayList();
