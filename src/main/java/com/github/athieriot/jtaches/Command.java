@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.List;
 
-import static com.esotericsoftware.minlog.Log.info;
+import static com.esotericsoftware.minlog.Log.*;
 import static com.github.athieriot.jtaches.command.Configuration.yamlToMap;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -43,8 +43,13 @@ public enum Command {;
 
     public static void executeMain(String [] args) throws IOException, InterruptedException {
         CommandArgs commandArgs = parseCommandLine(args);
-        List<Tache> taches = parseConfigurationFile(commandArgs.getConfigurationFile());
+        initializeLogger(commandArgs);
 
+        List<Tache> taches = parseConfigurationFile(commandArgs.getConfigurationFile());
+        keepWatching(commandArgs, taches);
+    }
+
+    private static void keepWatching(CommandArgs commandArgs, List<Tache> taches) throws IOException, InterruptedException {
         Guardian guardian = Guardian.create();
 
         for(Tache tache : taches) {
@@ -65,6 +70,13 @@ public enum Command {;
 
         if(commandArgs.hasHelp()) {jCommander.usage(); System.exit(0);}
         return commandArgs;
+    }
+    private static void initializeLogger(CommandArgs commandArgs) {
+        Log.setLogger(new ConsoleLogger());
+        if(commandArgs.isVerbose()) {
+            Log.set(LEVEL_DEBUG);
+            debug("==Verbose mode activated==");
+        }
     }
     private static List<Tache> parseConfigurationFile(String configurationFile) {
         try {
