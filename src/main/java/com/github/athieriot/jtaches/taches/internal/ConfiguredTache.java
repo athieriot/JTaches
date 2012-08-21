@@ -31,11 +31,11 @@ public abstract class ConfiguredTache implements Tache {
             throw new InvalidParameterException("An error occured while creating the task. Configuration invalid: " + allMandatories.toString() + " needed.");
         }
     }
-    boolean validateConfiguration(Map<String, String> configuration, List<String> mandatories) {
+    final boolean validateConfiguration(Map<String, String> configuration, List<String> mandatories) {
         return mandatories == null || configuration == null || configuration.keySet().containsAll(mandatories);
     }
 
-    List<String> loadedWithDefaultValues(List<String> mandatories) {
+    private List<String> loadedWithDefaultValues(List<String> mandatories) {
         //Path need to be set to be able to watch
         if(mandatories != null) {
             List<String> temp = newArrayList(mandatories);
