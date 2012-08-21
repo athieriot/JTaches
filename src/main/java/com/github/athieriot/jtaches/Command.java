@@ -13,7 +13,7 @@ import static com.github.athieriot.jtaches.command.Configuration.yamlToMap;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
-public class Command {
+public enum Command {;
 
     public static void main(String[] args) {
         try {

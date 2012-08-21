@@ -11,7 +11,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import com.github.athieriot.jtaches.Tache;
 
-public class Configuration {
+public enum Configuration {;
 
     public final static String CONFIGURATION_PATH = "path";
 

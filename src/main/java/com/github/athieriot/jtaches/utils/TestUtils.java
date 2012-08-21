@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 
-public class TestUtils {
+public enum TestUtils {;
 
     public static WatchEvent<Path> newWatchEvent(final WatchEvent.Kind<Path> kind) {
         Path path;
