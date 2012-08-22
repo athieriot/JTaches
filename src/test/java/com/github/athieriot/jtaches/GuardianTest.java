@@ -14,6 +14,7 @@ import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
+//CLEANUP: These tests deserve a refactor
 public class GuardianTest {
 
     private Path temporary_directory;
@@ -125,7 +126,6 @@ public class GuardianTest {
         guardian.registerTache(dummy2);
         guardian.onEvent(createEvent);
 
-        //TODO: Tests deserve a refactor
         verify(dummy).onCreate(createEvent);
         verify(dummy, never()).onDelete(createEvent);
         verify(dummy, never()).onModify(createEvent);
