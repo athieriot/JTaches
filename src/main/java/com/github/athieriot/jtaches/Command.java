@@ -23,6 +23,7 @@ public enum Command {;
             executeMain(args);
 
         } catch (IOException ioe) {
+            //TODO: Localize the messages
             info("A problem occured with guardian: " + ioe.getMessage(), ioe);
             System.exit(1);
         } catch (InvalidParameterException ipe) {
@@ -42,21 +43,25 @@ public enum Command {;
     public static void executeMain(String [] args) throws IOException, InterruptedException {
         CommandArgs commandArgs = parseCommandLine(args);
         initializeLogger(commandArgs, new ConsoleLogger());
-
         List<Tache> taches = parseConfigurationFile(commandArgs.getConfigurationFile());
-        keepWatching(commandArgs, taches);
+
+        startWatching(commandArgs, taches);
     }
 
-    private static void keepWatching(CommandArgs commandArgs, List<Tache> taches) throws IOException, InterruptedException {
+    private static void startWatching(CommandArgs commandArgs, List<Tache> taches) throws IOException, InterruptedException {
         Guardian guardian = Guardian.create();
 
         for(Tache tache : taches) {
             /*- If a tache is invalid, the program quit
               - If the configuration file reference a non existing class, the guardian skip it
             */
-            guardian.registerTache(tache);
+            //FIXME: Don't register the same path twice
+            guardian.registerTache(tache, commandArgs.isRecursive());
         }
 
+        keepWatching(commandArgs, guardian);
+    }
+    private static void keepWatching(CommandArgs commandArgs, Guardian guardian) throws IOException, InterruptedException {
         if(!commandArgs.isRegisterOnly()) {
             guardian.watch();
         }
@@ -69,7 +74,7 @@ public enum Command {;
         if(commandArgs.hasHelp()) {jCommander.usage(); System.exit(0);}
         return commandArgs;
     }
-    public static void initializeLogger(CommandArgs commandArgs, Log.Logger logger) {
+    static void initializeLogger(CommandArgs commandArgs, Log.Logger logger) {
         Log.setLogger(logger);
         if(commandArgs.isVerbose()) {
             Log.set(LEVEL_DEBUG);

@@ -4,7 +4,10 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
 import java.security.InvalidParameterException;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
@@ -12,7 +15,7 @@ import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
 
 //CLEANUP: These tests deserve a refactor
 public class GuardianTest {
@@ -36,17 +39,12 @@ public class GuardianTest {
 
     @Test
     public void a_guardian_must_accept_tache_registering() throws IOException {
-        WatchKey key = Guardian.create().registerTache(new DummyTache(temporary_directory));
-
-        assertNotNull(key);
-        assertTrue(key.isValid());
+        Guardian.create().registerTache(new DummyTache(temporary_directory));
     }
 
     @Test
     public void a_guardian_must_accept_null_tache_registering() throws IOException {
-        WatchKey key = Guardian.create().registerTache(null);
-
-        assertNull(key);
+        Guardian.create().registerTache(null);
     }
 
     @Test(expectedExceptions = InvalidParameterException.class)
@@ -61,7 +59,7 @@ public class GuardianTest {
 
         guardian.watch();
 
-        verify(guardian, never()).onEvent(any(WatchEvent.class));
+        verify(guardian, never()).dispatchEvent(any(WatchEvent.class));
     }
 
     @Test(timeOut = 2000)
@@ -107,7 +105,7 @@ public class GuardianTest {
         WatchEvent<Path> createEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_CREATE);
 
         guardian.registerTache(dummy);
-        guardian.onEvent(createEvent);
+        guardian.dispatchEvent(createEvent);
 
         verify(dummy).onCreate(createEvent);
         verify(dummy, never()).onDelete(createEvent);
@@ -124,7 +122,7 @@ public class GuardianTest {
 
         guardian.registerTache(dummy);
         guardian.registerTache(dummy2);
-        guardian.onEvent(createEvent);
+        guardian.dispatchEvent(createEvent);
 
         verify(dummy).onCreate(createEvent);
         verify(dummy, never()).onDelete(createEvent);
@@ -143,7 +141,7 @@ public class GuardianTest {
         WatchEvent<Path> deleteEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_DELETE);
 
         guardian.registerTache(dummy);
-        guardian.onEvent(deleteEvent);
+        guardian.dispatchEvent(deleteEvent);
 
         verify(dummy, never()).onCreate(deleteEvent);
         verify(dummy).onDelete(deleteEvent);
@@ -158,7 +156,7 @@ public class GuardianTest {
         WatchEvent<Path> modifyEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_MODIFY);
 
         guardian.registerTache(dummy);
-        guardian.onEvent(modifyEvent);
+        guardian.dispatchEvent(modifyEvent);
 
         verify(dummy, never()).onCreate(modifyEvent);
         verify(dummy, never()).onDelete(modifyEvent);
@@ -172,7 +170,7 @@ public class GuardianTest {
         WatchEvent overFlowEvent = newOverFlowEvent();
 
         guardian.registerTache(dummy);
-        guardian.onEvent(overFlowEvent);
+        guardian.dispatchEvent(overFlowEvent);
 
         verify(guardian).dealWithOverFlow(overFlowEvent);
     }

@@ -7,6 +7,9 @@ public class CommandArgs {
     @Parameter(names = {"-v", "--verbose"}, description = "Verbose mode")
     private boolean verbose = false;
 
+    @Parameter(names = {"--noRecursive"}, description = "Disable recursive watching")
+    private boolean noRecursive = false;
+
     @Parameter(names = {"--registerOnly"}, description = "Test mode - Taches registration only")
     private boolean registerOnly = false;
 
@@ -18,6 +21,10 @@ public class CommandArgs {
 
     public boolean isVerbose() {
         return verbose;
+    }
+
+    public boolean isRecursive() {
+        return !noRecursive;
     }
 
     public boolean isRegisterOnly() {

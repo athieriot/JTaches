@@ -15,7 +15,7 @@ public class ScriptTache extends ConfiguredTache {
     public static final String CONFIGURATION_SCRIPT = "script";
     public static final String CONFIGURATION_WORKING_DIRECTORY = "workingDirectory";
 
-    //CLEANUP: Enumeration or List
+    //CLEANUP: Enumeration of patterns
     private static final String FILE_REPLACEMENT = "<file>";
     private static final String PATH_REPLACEMENT = "<path>";
     private static final String EVENT_REPLACEMENT = "<event>";

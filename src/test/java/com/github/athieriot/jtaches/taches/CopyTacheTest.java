@@ -17,9 +17,7 @@ import static com.google.common.io.Files.copy;
 import static com.google.common.io.Files.createTempDir;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.spy;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 //CLEANUP: This test is not really a beauty
 public class CopyTacheTest {

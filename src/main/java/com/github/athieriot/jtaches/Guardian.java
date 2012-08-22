@@ -2,18 +2,29 @@ package com.github.athieriot.jtaches;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.InvalidParameterException;
 import java.util.List;
+import java.util.Map;
 
+import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.info;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static java.nio.file.Files.walkFileTree;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 public class Guardian {
 
     private WatchService watchService;
-    private WatchKey globalWatchKey;
+
+    /**
+     * Corresponding Map between subdirectory registration and relative path.
+     * Used internally by the Guardian to make recursive watching working
+     */
+    //TODO: Exploded this system in other classes maybe
+    private Map<WatchKey, Path> globalWatchKeys = newHashMap();
 
     private List<Tache> taches = newArrayList();
 
@@ -29,20 +40,23 @@ public class Guardian {
         }
     }
 
-    public WatchKey registerTache(Tache tache) {
+    public void registerTache(Tache tache) throws IOException {
+        //TODO: Think about this default choice
+        //TODO: Filter .files
+        registerTache(tache, false);
+    }
+    public void registerTache(Tache tache, boolean recursive) {
         if(tache != null) {
             if(!isTacheValid(tache)) {
                 throw new InvalidParameterException("Tache not valid: " + tacheToString(tache));
             }
 
             try {
-                return addTache(tache);
+                addTache(tache, recursive);
             } catch (IOException e) {
                 throw new InvalidParameterException("An error occured when register the tache " + tacheToString(tache) + ": " + getRootCauseMessage(e));
             }
         }
-
-        return null;
     }
     private boolean isTacheValid(Tache tache) {
         return tache.getPath() != null;
@@ -51,12 +65,37 @@ public class Guardian {
         return tache.getClass().getSimpleName() + " watching on directory: " + tache.getPath();
     }
 
-    private WatchKey addTache(Tache tache) throws IOException {
-        WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, OVERFLOW);
-        this.taches.add(tache);
+    private void addTache(Tache tache, boolean recursive) throws IOException {
+        if(recursive) {
+            registerDirectories(tache.getPath());
+        } else {
+            registerDirectory(tache.getPath());
+        }
 
+        this.taches.add(tache);
         info("Register tache: " + tacheToString(tache));
-        return key;
+    }
+
+    private void registerDirectories(final Path globalPath) throws IOException {
+        //TODO: Valider From/To de CopyTache
+        SimpleFileVisitor<Path> directoryRegister = new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attr) throws IOException {
+                registerDirectory(directory, globalPath);
+
+                return FileVisitResult.CONTINUE;
+            }
+        };
+        walkFileTree(globalPath, directoryRegister);
+    }
+    private void registerDirectory(Path path) throws IOException {
+        registerDirectory(path, path);
+    }
+    private void registerDirectory(Path path, Path globalPath) throws IOException {
+        WatchKey key = path.register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW);
+        globalWatchKeys.put(key, globalPath.relativize(path));
+
+        debug("Register path: " + path);
     }
 
     public void watch() throws IOException, InterruptedException {
@@ -71,30 +110,37 @@ public class Guardian {
     }
 
     private void waitingForEvents() throws IOException, InterruptedException {
-        globalWatchKey = watchService.take();
-
-        doBlockingLoop();
-    }
-    private void doBlockingLoop() throws IOException {
         while (true) {
-            for (final WatchEvent<?> event : globalWatchKey.pollEvents()) {
-                onEvent(event);
+            WatchKey localKey = watchService.take();
+
+            for (final WatchEvent<?> event : localKey.pollEvents()) {
+                dispatchEvent(relativizedEvent(event, localKey));
             }
 
-            if (!globalWatchKey.reset()) {
-                onCancel();
+            if (!localKey.reset()) {
+                onCancel(localKey);
                 break;
             }
         }
     }
 
-    void onEvent(WatchEvent<?> event) {
-        for(Tache tache : taches) {
-            dispatchEvents(event, tache);
+    //TODO: Move this in an utility class
+    WatchEvent<?> relativizedEvent(WatchEvent<?> event, WatchKey key) {
+        if(globalWatchKeys.containsKey(key)) {
+            //FIXME: Find a way to relativize context()
+            return event;
+        } else {
+            info("No trace of this watch key: " + key.toString());
+            return event;
         }
     }
 
-    private void dispatchEvents(WatchEvent<?> event, Tache tache) {
+    void dispatchEvent(WatchEvent<?> event) {
+        for(Tache tache : taches) {
+            fire(event, tache);
+        }
+    }
+    private void fire(WatchEvent<?> event, Tache tache) {
         if (event.kind() == OVERFLOW) {
             dealWithOverFlow(event);
         }
@@ -112,9 +158,9 @@ public class Guardian {
         info("Overflow detected. You may have lost one or more event calls.");
     }
 
-    private void onCancel() throws IOException {
+    private void onCancel(WatchKey key) throws IOException {
         info("Watcher no longer valid. Closing.");
-        globalWatchKey.cancel();
+        key.cancel();
         cancel();
     }
 }
