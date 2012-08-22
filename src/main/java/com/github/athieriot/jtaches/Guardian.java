@@ -52,7 +52,7 @@ public class Guardian {
     }
 
     private WatchKey addTache(Tache tache) throws IOException {
-        WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+        WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW);
         this.taches.add(tache);
 
         info("Register tache: " + tacheToString(tache));
@@ -77,7 +77,6 @@ public class Guardian {
     }
     private void doBlockingLoop() throws IOException {
         while (true) {
-            //TODO: React to the Overflow event
             for (final WatchEvent<?> event : globalWatchKey.pollEvents()) {
                 onEvent(event);
             }
@@ -96,6 +95,9 @@ public class Guardian {
     }
 
     private void dispatchEvents(WatchEvent<?> event, Tache tache) {
+        if (event.kind() == OVERFLOW) {
+            dealWithOverFlow(event);
+        }
         if (event.kind() == ENTRY_CREATE) {
             tache.onCreate(event);
         }
@@ -105,6 +107,9 @@ public class Guardian {
         if (event.kind() == ENTRY_MODIFY) {
             tache.onModify(event);
         }
+    }
+    void dealWithOverFlow(WatchEvent<?> event) {
+        info("Overflow detected. You may have lost one or more event calls.");
     }
 
     private void onCancel() throws IOException {

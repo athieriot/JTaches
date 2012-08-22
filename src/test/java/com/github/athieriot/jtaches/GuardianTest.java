@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.security.InvalidParameterException;
 
+import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Paths.get;
@@ -162,5 +163,17 @@ public class GuardianTest {
         verify(dummy, never()).onCreate(modifyEvent);
         verify(dummy, never()).onDelete(modifyEvent);
         verify(dummy).onModify(modifyEvent);
+    }
+
+    @Test
+    public void a_guardian_must_fire_overflow_events() throws IOException {
+        Guardian guardian = spy(Guardian.create());
+        Tache dummy = new DummyTache(temporary_directory);
+        WatchEvent overFlowEvent = newOverFlowEvent();
+
+        guardian.registerTache(dummy);
+        guardian.onEvent(overFlowEvent);
+
+        verify(guardian).dealWithOverFlow(overFlowEvent);
     }
 }

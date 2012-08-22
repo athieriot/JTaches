@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 
+import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
 import static java.nio.file.Paths.get;
 import static org.testng.Assert.*;
@@ -43,5 +44,10 @@ public class TestUtilsTest {
 
         assertEquals(testable.kind(), StandardWatchEventKinds.ENTRY_MODIFY);
         assertEquals(testable.context(), expectedPath);
+    }
+
+    @Test
+    public void newWatchEvent_must_be_able_to_create_an_overflow_event() throws Exception {
+        assertEquals(newOverFlowEvent().kind(), StandardWatchEventKinds.OVERFLOW);
     }
 }
