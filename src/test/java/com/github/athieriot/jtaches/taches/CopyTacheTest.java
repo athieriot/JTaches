@@ -17,6 +17,7 @@ import static com.google.common.io.Files.copy;
 import static com.google.common.io.Files.createTempDir;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.spy;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -71,6 +72,7 @@ public class CopyTacheTest {
                                      get(from.getName()))); //
 
         assertTrue(new File(toTemp + "/" + from.getName()).exists());
+        assertEquals(from.length(), new File(toTemp + "/" + from.getName()).length());
     }
 
     @Test

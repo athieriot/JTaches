@@ -52,7 +52,7 @@ public class Guardian {
     }
 
     private WatchKey addTache(Tache tache) throws IOException {
-        WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW);
+        WatchKey key = tache.getPath().register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, OVERFLOW);
         this.taches.add(tache);
 
         info("Register tache: " + tacheToString(tache));

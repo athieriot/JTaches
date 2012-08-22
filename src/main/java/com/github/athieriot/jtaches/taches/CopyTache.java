@@ -24,7 +24,14 @@ public class CopyTache extends ConfiguredTache {
 
     @Override
     public void onCreate(WatchEvent<?> event) {
-        doCopy(event);
+        Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));
+
+        try {
+            info("Creating file: " + to.toString());
+            to.toFile().createNewFile();
+        } catch (IOException e) {
+            info("Unable to create file: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -41,13 +48,6 @@ public class CopyTache extends ConfiguredTache {
 
     @Override
     public void onModify(WatchEvent<?> event) {
-        doCopy(event);
-    }
-
-    private String resolveFileName(WatchEvent<?> event) {
-        return event.context().toString();
-    }
-    private void doCopy(WatchEvent<?> event) {
         Path from = get(getConfiguration().get(CONFIGURATION_PATH), resolveFileName(event));
         Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));
 
@@ -57,5 +57,9 @@ public class CopyTache extends ConfiguredTache {
         } catch (IOException e) {
             info("Unable to copy file: " + e.getMessage(), e);
         }
+    }
+
+    private String resolveFileName(WatchEvent<?> event) {
+        return event.context().toString();
     }
 }
