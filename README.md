@@ -63,10 +63,11 @@ Hack
 If you want to build a Tache, you need to write a new class implementing the Tache interface.
 ConfiguredTache is just an abstract class made to ease the work.
 
-Then, you have access to four methods:
+Then, you have access to five things:
 
 + getPath() that you need to implement to provide the path to watch.
 + onCreate(), onDelete() and onModify() which are events callbacks and have to be implemented. See [WatchEvent](http://docs.oracle.com/javase/7/docs/api/java/nio/file/WatchEvent.html).
++ Log is a static logging object from which you have access to info(), debug(), etc... See [Minlog](http://code.google.com/p/minlog/). The default log level in INFO and DEBUG in verbose mode.
 
 Additionally if you use ConfiguredTache:
 

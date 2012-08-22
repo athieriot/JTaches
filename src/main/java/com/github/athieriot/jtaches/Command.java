@@ -23,7 +23,6 @@ public enum Command {;
             executeMain(args);
 
         } catch (IOException ioe) {
-            //TODO: Talk about loader in documentation
             info("A problem occured with guardian: " + ioe.getMessage(), ioe);
             System.exit(1);
         } catch (InvalidParameterException ipe) {
