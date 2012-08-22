@@ -13,7 +13,7 @@ public enum TestUtils {;
         try {path = Files.createTempFile("noevent", "");
         } catch (IOException e) {path = null;}
 
-        return buildWatchEvent(kind, path);
+        return newWatchEvent(kind, path);
     }
 
     public static WatchEvent<Path> newWatchEvent(final WatchEvent.Kind<Path> kind, final Path path) {

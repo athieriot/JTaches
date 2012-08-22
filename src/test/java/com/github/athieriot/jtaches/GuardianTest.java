@@ -59,7 +59,7 @@ public class GuardianTest {
 
         guardian.watch();
 
-        verify(guardian, never()).dispatchEvent(any(WatchEvent.class));
+        verify(guardian, never()).dispatch(any(WatchEvent.class));
     }
 
     @Test(timeOut = 2000)
@@ -105,7 +105,7 @@ public class GuardianTest {
         WatchEvent<Path> createEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_CREATE);
 
         guardian.registerTache(dummy);
-        guardian.dispatchEvent(createEvent);
+        guardian.dispatch(createEvent);
 
         verify(dummy).onCreate(createEvent);
         verify(dummy, never()).onDelete(createEvent);
@@ -122,7 +122,7 @@ public class GuardianTest {
 
         guardian.registerTache(dummy);
         guardian.registerTache(dummy2);
-        guardian.dispatchEvent(createEvent);
+        guardian.dispatch(createEvent);
 
         verify(dummy).onCreate(createEvent);
         verify(dummy, never()).onDelete(createEvent);
@@ -141,7 +141,7 @@ public class GuardianTest {
         WatchEvent<Path> deleteEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_DELETE);
 
         guardian.registerTache(dummy);
-        guardian.dispatchEvent(deleteEvent);
+        guardian.dispatch(deleteEvent);
 
         verify(dummy, never()).onCreate(deleteEvent);
         verify(dummy).onDelete(deleteEvent);
@@ -156,7 +156,7 @@ public class GuardianTest {
         WatchEvent<Path> modifyEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_MODIFY);
 
         guardian.registerTache(dummy);
-        guardian.dispatchEvent(modifyEvent);
+        guardian.dispatch(modifyEvent);
 
         verify(dummy, never()).onCreate(modifyEvent);
         verify(dummy, never()).onDelete(modifyEvent);
@@ -170,7 +170,7 @@ public class GuardianTest {
         WatchEvent overFlowEvent = newOverFlowEvent();
 
         guardian.registerTache(dummy);
-        guardian.dispatchEvent(overFlowEvent);
+        guardian.dispatch(overFlowEvent);
 
         verify(guardian).dealWithOverFlow(overFlowEvent);
     }

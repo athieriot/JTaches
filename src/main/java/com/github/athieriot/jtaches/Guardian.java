@@ -1,6 +1,7 @@
 package com.github.athieriot.jtaches;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.InvalidParameterException;
@@ -12,6 +13,7 @@ import static com.esotericsoftware.minlog.Log.info;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.nio.file.Files.walkFileTree;
+import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
@@ -43,6 +45,7 @@ public class Guardian {
     public void registerTache(Tache tache) throws IOException {
         //TODO: Think about this default choice
         //TODO: Filter .files
+        //TODO: Add more tests about recursive watching
         registerTache(tache, false);
     }
     public void registerTache(Tache tache, boolean recursive) {
@@ -114,7 +117,7 @@ public class Guardian {
             WatchKey localKey = watchService.take();
 
             for (final WatchEvent<?> event : localKey.pollEvents()) {
-                dispatchEvent(relativizedEvent(event, localKey));
+                dispatch(relativizedEvent(event, localKey));
             }
 
             if (!localKey.reset()) {
@@ -127,15 +130,26 @@ public class Guardian {
     //TODO: Move this in an utility class
     WatchEvent<?> relativizedEvent(WatchEvent<?> event, WatchKey key) {
         if(globalWatchKeys.containsKey(key)) {
-            //FIXME: Find a way to relativize context()
-            return event;
+            return decoratedEvent(event, globalWatchKeys.get(key));
         } else {
             info("No trace of this watch key: " + key.toString());
             return event;
         }
     }
+    private WatchEvent<?> decoratedEvent(WatchEvent<?> event, Path relativePath) {
+        try {
+            Field context = event.getClass().getDeclaredField("context");
+            context.setAccessible(true);
+            context.set(event, get(relativePath.toString(), event.context().toString()));
+            context.setAccessible(false);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            debug("Unable to decorate " + event.kind() + " event: " + event.context() + " with relative path: " + relativePath, e);
+        }
 
-    void dispatchEvent(WatchEvent<?> event) {
+        return event;
+    }
+
+    void dispatch(WatchEvent<?> event) {
         for(Tache tache : taches) {
             fire(event, tache);
         }

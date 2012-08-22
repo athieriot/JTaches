@@ -23,6 +23,7 @@ public class CopyTache extends ConfiguredTache {
     }
 
     @Override
+    //TODO: Maybe just do a simple copy to avoid directory issues
     public void onCreate(WatchEvent<?> event) {
         Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));
 
