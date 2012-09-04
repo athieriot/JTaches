@@ -1,21 +1,27 @@
 package com.github.athieriot.jtaches;
 
+import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
 import java.security.InvalidParameterException;
+import java.util.Map;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
+import static com.google.common.collect.Maps.newHashMap;
+import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Paths.get;
+import static java.nio.file.StandardWatchEventKinds.*;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.AssertJUnit.assertEquals;
 
 //CLEANUP: These tests deserve a refactor
 public class GuardianTest {
@@ -97,12 +103,87 @@ public class GuardianTest {
         verify(guardian, atLeastOnce()).cancel();
     }
 
+    @Test(timeOut = 2000)
+    public void a_guardian_must_watch_true_sub_file_creation() throws IOException, InterruptedException {
+        final Guardian guardian = spy(Guardian.create());
+        createDirectories(get(temporary_directory.toString(), "src", "main"));
+
+        Tache cancelling = spy(new Tache() {
+            public Path getPath() {return temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        });
+        guardian.registerTache(cancelling, true);
+
+        Thread creatorThread = new Thread(
+                new Runnable() {
+                    public void run() {
+                        while(true) {
+                            try {
+                                createFile(get(temporary_directory.toString(), "src", "main", "areyouwatchingtome"));
+                            } catch (IOException e) {}
+                        }
+                    }
+                }
+        );
+        creatorThread.start();
+
+        guardian.watch();
+
+        ArgumentCaptor<WatchEvent> argument = ArgumentCaptor.forClass(WatchEvent.class);
+        verify(cancelling).onCreate(argument.capture());
+        verify(guardian, atLeastOnce()).cancel();
+
+        assertEquals(get("src/main/areyouwatchingtome"), argument.getValue().context());
+    }
+
+    @Test(timeOut = 2000)
+    public void a_guardian_must_not_watch_sub_file_creation_if_no_recursive() throws IOException, InterruptedException {
+        final Guardian guardian = spy(Guardian.create());
+        createDirectories(get(temporary_directory.toString(), "src", "main"));
+
+        Tache cancelling = spy(new Tache() {
+            public Path getPath() {return temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        });
+       guardian.registerTache(cancelling, false);
+
+        Thread creatorThread = new Thread(
+                new Runnable() {
+                    public void run() {
+                        while(true) {
+                            try {
+                                createFile(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtome"));
+                            } catch (IOException e) {}
+                        }
+                    }
+                }
+        );
+        creatorThread.start();
+
+        guardian.watch(1500L);
+
+        verify(cancelling, never()).onCreate(any(WatchEvent.class));
+        verify(guardian, never()).cancel();
+    }
+
     @Test
     public void a_guardian_must_fire_onCreate_events() throws IOException {
         Guardian guardian = Guardian.create();
         Tache dummy = spy(new DummyTache(temporary_directory));
 
-        WatchEvent<Path> createEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_CREATE);
+        WatchEvent<Path> createEvent = newWatchEvent(ENTRY_CREATE);
 
         guardian.registerTache(dummy);
         guardian.dispatch(createEvent);
@@ -118,7 +199,7 @@ public class GuardianTest {
         Tache dummy = spy(new DummyTache(temporary_directory));
         Tache dummy2 = spy(new DummyTache(temporary_directory));
 
-        WatchEvent<Path> createEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_CREATE);
+        WatchEvent<Path> createEvent = newWatchEvent(ENTRY_CREATE);
 
         guardian.registerTache(dummy);
         guardian.registerTache(dummy2);
@@ -138,7 +219,7 @@ public class GuardianTest {
         Guardian guardian = spy(Guardian.create());
         Tache dummy = spy(new DummyTache(temporary_directory));
 
-        WatchEvent<Path> deleteEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_DELETE);
+        WatchEvent<Path> deleteEvent = newWatchEvent(ENTRY_DELETE);
 
         guardian.registerTache(dummy);
         guardian.dispatch(deleteEvent);
@@ -153,7 +234,7 @@ public class GuardianTest {
         Guardian guardian = spy(Guardian.create());
         Tache dummy = spy(new DummyTache(temporary_directory));
 
-        WatchEvent<Path> modifyEvent = newWatchEvent(StandardWatchEventKinds.ENTRY_MODIFY);
+        WatchEvent<Path> modifyEvent = newWatchEvent(ENTRY_MODIFY);
 
         guardian.registerTache(dummy);
         guardian.dispatch(modifyEvent);
@@ -173,5 +254,23 @@ public class GuardianTest {
         guardian.dispatch(overFlowEvent);
 
         verify(guardian).dealWithOverFlow(overFlowEvent);
+    }
+
+    @Test
+    public void decorate_an_event_should_relativize_the_context_if_key_present() throws IOException {
+        Guardian guardian = spy(Guardian.create());
+        Map<WatchKey, Path> map = newHashMap();
+        doReturn(map).when(guardian).getGlobalWatchKeys();
+
+        Path relativePath = get("src/main");
+        Path globalPath = get("src");
+        guardian.registerDirectory(relativePath, globalPath);
+
+        WatchEvent<?> event = (WatchEvent<?>) newWatchEvent(ENTRY_CREATE);
+
+        Path expectedContext = get("main", event.context().toString());
+        WatchEvent<?> decoratedEvent = guardian.decoratedEvent(event, map.keySet().iterator().next());
+
+        assertEquals(expectedContext, decoratedEvent.context());
     }
 }

@@ -3,8 +3,6 @@ package com.github.athieriot.jtaches.taches;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.nio.file.Path;
-import java.nio.file.WatchEvent;
 import java.util.Map;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
