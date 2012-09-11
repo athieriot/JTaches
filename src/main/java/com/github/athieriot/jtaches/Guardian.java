@@ -27,6 +27,7 @@ public class Guardian {
      */
     //TODO: Exploded this system in other classes maybe
     //TODO: More Javadoc
+    //TODO: Register new created directories
     private Map<WatchKey, Path> globalWatchKeys = newHashMap();
 
     private List<Tache> taches = newArrayList();
@@ -45,7 +46,6 @@ public class Guardian {
 
     public void registerTache(Tache tache) throws IOException {
         //TODO: Filter .files
-        //TODO: Add more tests about recursive watching
         registerTache(tache, DEFAULT_RECURSIVE);
     }
     public void registerTache(Tache tache, boolean recursive) {
