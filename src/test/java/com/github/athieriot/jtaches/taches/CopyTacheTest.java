@@ -4,11 +4,8 @@ import com.github.athieriot.jtaches.Tache;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import javax.naming.spi.DirectoryManager;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.util.Map;
 
