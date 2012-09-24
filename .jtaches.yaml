@@ -4,7 +4,7 @@
 
 - !!com.github.athieriot.jtaches.taches.CopyTache [{
     path: "./src",
-    copyTo: "./target"
+    copyTo: "./target",
     makePath: true
 }]
 
