@@ -12,6 +12,7 @@ import java.util.List;
 import static com.github.athieriot.jtaches.command.Configuration.yamlToMap;
 import static org.testng.Assert.*;
 
+//TODO: Test booleans
 public class ConfigurationTest {
 
     @Test
