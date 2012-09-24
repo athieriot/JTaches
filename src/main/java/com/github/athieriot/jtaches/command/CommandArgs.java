@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 
 public class CommandArgs {
 
-    public final static boolean DEFAULT_RECURSIVE = true;
+    public static final boolean DEFAULT_RECURSIVE = true;
 
     @Parameter(names = {"-v", "--verbose"}, description = "Verbose mode")
     private boolean verbose = false;

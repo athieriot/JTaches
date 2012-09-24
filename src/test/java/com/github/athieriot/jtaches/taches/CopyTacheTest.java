@@ -4,8 +4,11 @@ import com.github.athieriot.jtaches.Tache;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import javax.naming.spi.DirectoryManager;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.util.Map;
 
@@ -43,6 +46,20 @@ public class CopyTacheTest {
                                      get(from.getName()))); //
 
         assertTrue(new File(toTemp + "/" + from.getName()).exists());
+    }
+
+    @Test
+    public void copy_tache_must_copy_if_a_directory_is_created() throws IOException {
+        Tache tache = spy(new CopyTache(map));
+
+        File from = new File(fromTemp.getAbsolutePath() + "/" + "omagad");
+        from.mkdir();
+
+        tache.onCreate(newWatchEvent(StandardWatchEventKinds.ENTRY_CREATE, //
+                                     get(from.getName()))); //
+
+        assertTrue(new File(toTemp + "/" + from.getName()).exists());
+        assertTrue(new File(toTemp + "/" + from.getName()).isDirectory());
     }
 
     @Test

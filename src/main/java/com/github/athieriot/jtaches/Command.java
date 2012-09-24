@@ -50,13 +50,14 @@ public enum Command {;
 
     private static void startWatching(CommandArgs commandArgs, List<Tache> taches) throws IOException, InterruptedException {
         Guardian guardian = Guardian.create();
+        guardian.setCommandArgs(commandArgs);
 
         for(Tache tache : taches) {
             /*- If a tache is invalid, the program quit
               - If the configuration file reference a non existing class, the guardian skip it
             */
             //FIXME: Don't register the same path twice
-            guardian.registerTache(tache, commandArgs.isRecursive());
+            guardian.registerTache(tache);
         }
 
         keepWatching(commandArgs, guardian);

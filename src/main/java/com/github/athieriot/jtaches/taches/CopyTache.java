@@ -48,7 +48,7 @@ public class CopyTache extends ConfiguredTache {
     private String resolveFileName(WatchEvent<?> event) {
         return event.context().toString();
     }
-    //TODO: What happen for directories?
+
     private void doCopy(WatchEvent<?> event) {
         Path from = get(getConfiguration().get(CONFIGURATION_PATH), resolveFileName(event));
         Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));

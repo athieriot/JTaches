@@ -27,10 +27,12 @@ import static org.testng.AssertJUnit.assertEquals;
 public class GuardianTest {
 
     private Path temporary_directory;
+    private Path another_temporary_directory;
 
     @BeforeTest
     public void setup() throws IOException {
         temporary_directory = Files.createTempDirectory("_awesomeless");
+        another_temporary_directory = Files.createTempDirectory("_awesomemore");
     }
 
     @Test
@@ -157,7 +159,7 @@ public class GuardianTest {
             public void onDelete(WatchEvent<?> event) {}
             public void onModify(WatchEvent<?> event) {}
         });
-       guardian.registerTache(cancelling, false);
+        guardian.registerTache(cancelling, false);
 
         Thread creatorThread = new Thread(
                 new Runnable() {
@@ -176,6 +178,55 @@ public class GuardianTest {
 
         verify(cancelling, never()).onCreate(any(WatchEvent.class));
         verify(guardian, never()).cancel();
+    }
+
+    @Test(timeOut = 2000)
+    public void a_guardian_must_not_watch_sub_file_creation_if_not_related_task() throws IOException, InterruptedException {
+        final Guardian guardian = spy(Guardian.create());
+        createDirectories(get(temporary_directory.toString(), "src", "main"));
+        createDirectories(get(another_temporary_directory.toString(), "src", "main"));
+
+        Tache cancelling = spy(new Tache() {
+            public Path getPath() {return temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        });
+        Tache notexpected = spy(new Tache() {
+            public Path getPath() {return another_temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        });
+        guardian.registerTache(cancelling, true);
+        guardian.registerTache(notexpected, true);
+
+        Thread creatorThread = new Thread(
+                new Runnable() {
+                    public void run() {
+                        while(true) {
+                            try {
+                                createFile(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtomybuddy"));
+                            } catch (IOException e) {}
+                        }
+                    }
+                }
+        );
+        creatorThread.start();
+
+        guardian.watch(1500L);
+
+        verify(cancelling).onCreate(any(WatchEvent.class));
+        verify(notexpected, never()).onCreate(any(WatchEvent.class));
+        verify(guardian, atLeastOnce()).cancel();
     }
 
     @Test
@@ -264,7 +315,7 @@ public class GuardianTest {
 
         Path relativePath = get("src/main");
         Path globalPath = get("src");
-        guardian.registerDirectory(relativePath, globalPath);
+        guardian.registerDirectory(relativePath, globalPath, null);
 
         WatchEvent<?> event = (WatchEvent<?>) newWatchEvent(ENTRY_CREATE);
 
