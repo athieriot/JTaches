@@ -74,6 +74,7 @@ public class CopyTache extends ConfiguredTache {
         }
     }
 
+    //CLEANUP: Could be good to handle Boolean as the object and not only via String
     private void makePathIfWanted(Path file) throws IOException {
         if(!getConfiguration().containsKey(CONFIGURATION_MAKE_PATH)
                 || parseBoolean(getConfiguration().get(CONFIGURATION_MAKE_PATH))) {
