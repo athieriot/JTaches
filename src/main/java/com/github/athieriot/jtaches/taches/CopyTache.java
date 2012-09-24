@@ -10,20 +10,20 @@ import java.util.Map;
 
 import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.Configuration.CONFIGURATION_PATH;
-import static java.nio.file.Files.copy;
-import static java.nio.file.Files.delete;
+import static java.lang.Boolean.parseBoolean;
+import static java.nio.file.Files.*;
 import static java.nio.file.Paths.get;
 
 public class CopyTache extends ConfiguredTache {
 
     public static final String CONFIGURATION_COPY_TO = "copyTo";
+    public static final String CONFIGURATION_MAKE_PATH = "makePath";
 
     public CopyTache(Map<String, String> configuration) {
         super(configuration, CONFIGURATION_COPY_TO);
     }
 
     @Override
-    //TODO: Add option to create directory if not exists
     public void onCreate(WatchEvent<?> event) {
         doCopy(event);
     }
@@ -54,10 +54,19 @@ public class CopyTache extends ConfiguredTache {
         Path to = get(getConfiguration().get(CONFIGURATION_COPY_TO), resolveFileName(event));
 
         try {
+            makePathIfWanted(to);
+
             info("Copying file: " + to.toString());
             copy(from, to, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             info("Unable to copy file: " + e.getMessage(), e);
+        }
+    }
+
+    private void makePathIfWanted(Path file) throws IOException {
+        if(!getConfiguration().containsKey(CONFIGURATION_MAKE_PATH)
+                || parseBoolean(getConfiguration().get(CONFIGURATION_MAKE_PATH))) {
+            createDirectories(file.getParent());
         }
     }
 }

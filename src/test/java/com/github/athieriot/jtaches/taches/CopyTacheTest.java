@@ -11,10 +11,10 @@ import java.util.Map;
 
 import static com.github.athieriot.jtaches.command.Configuration.CONFIGURATION_PATH;
 import static com.github.athieriot.jtaches.taches.CopyTache.CONFIGURATION_COPY_TO;
+import static com.github.athieriot.jtaches.taches.CopyTache.CONFIGURATION_MAKE_PATH;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.io.Files.copy;
-import static com.google.common.io.Files.createTempDir;
+import static com.google.common.io.Files.*;
 import static java.nio.file.Paths.get;
 import static org.mockito.Mockito.spy;
 import static org.testng.Assert.*;
@@ -93,6 +93,7 @@ public class CopyTacheTest {
         cloneMap.putAll(map);
         Tache tache = spy(new CopyTache(cloneMap));
         cloneMap.put(CONFIGURATION_COPY_TO, "bullshit");
+        cloneMap.put(CONFIGURATION_MAKE_PATH, "false");
 
         File from = new File(fromTemp.getAbsolutePath() + "/" + "oma.gad");
         from.createNewFile();
@@ -103,5 +104,41 @@ public class CopyTacheTest {
                                      get(from.getName()))); //
         tache.onModify(newWatchEvent(StandardWatchEventKinds.ENTRY_MODIFY, //
                                      get(from.getName()))); //
+    }
+
+    @Test
+    public void copy_tache_to_a_none_existing_directory_must_create_path_if_option() throws IOException {
+        Map<String, String> cloneMap = newHashMap();
+        cloneMap.putAll(map);
+        Tache tache = spy(new CopyTache(cloneMap));
+        cloneMap.put(CONFIGURATION_COPY_TO, toTemp + "/truth");
+        cloneMap.put(CONFIGURATION_MAKE_PATH, "true");
+
+        File from = new File(fromTemp.getAbsolutePath() + "/ghost/" + "oma.gad");
+        createParentDirs(from);
+        from.createNewFile();
+
+        tache.onCreate(newWatchEvent(StandardWatchEventKinds.ENTRY_MODIFY, //
+                get("ghost/", from.getName()))); //
+
+        assertTrue(new File(toTemp + "/truth/ghost/" + from.getName()).exists());
+    }
+
+    @Test
+    public void copy_tache_to_a_none_existing_directory_must_NOT_create_path_by_default() throws IOException {
+        Map<String, String> cloneMap = newHashMap();
+        cloneMap.putAll(map);
+        Tache tache = spy(new CopyTache(cloneMap));
+        cloneMap.put(CONFIGURATION_COPY_TO, toTemp + "/bollocs");
+        cloneMap.put(CONFIGURATION_MAKE_PATH, "false");
+
+        File from = new File(fromTemp.getAbsolutePath() + "/ghost/" + "oma.gad");
+        createParentDirs(from);
+        from.createNewFile();
+
+        tache.onCreate(newWatchEvent(StandardWatchEventKinds.ENTRY_MODIFY, //
+                get("ghost/", from.getName()))); //
+
+        assertFalse(new File(toTemp + "/bollocs/ghost/" + from.getName()).exists());
     }
 }

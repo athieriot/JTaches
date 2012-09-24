@@ -51,6 +51,7 @@ For now, you have access to three Taches:
 + **com.github.athieriot.jtaches.taches.CopyTache** : Copy watched files to another location.
     - "path", the directory to watch
     - "copyTo", where to copy the files
+    - "makePath", indicate to create or not the copy path if not exists (optional, default true)
 
 + **com.github.athieriot.jtaches.taches.ScriptTache** : Display envent details in the console.
     - "path", the directory to watch
