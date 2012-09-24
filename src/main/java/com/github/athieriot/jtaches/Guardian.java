@@ -35,6 +35,7 @@ public class Guardian {
      */
     //TODO: Exploded this system in other classes maybe
     //TODO: More Javadoc
+    //TODO: Too much stateful for my tastes
     private Map<WatchKey, Pair<Path, Tache>> globalWatchKeys = newHashMap();
 
     private List<Tache> taches = newArrayList();
@@ -92,7 +93,6 @@ public class Guardian {
     }
 
     private void registerTacheDirectories(final Tache tache) throws IOException {
-        //TODO: Valider From/To de CopyTache
         SimpleFileVisitor<Path> directoryRegister = new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attr) throws IOException {

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.WatchEvent;
+import java.security.InvalidParameterException;
 import java.util.Map;
 
 import static com.esotericsoftware.minlog.Log.info;
@@ -21,6 +22,16 @@ public class CopyTache extends ConfiguredTache {
 
     public CopyTache(Map<String, String> configuration) {
         super(configuration, CONFIGURATION_COPY_TO);
+    }
+
+    @Override
+    protected void additionalValidation(Map<String, String> configuration) throws InvalidParameterException {
+        super.additionalValidation(configuration);
+
+        if(configuration.get(CONFIGURATION_PATH).startsWith(configuration.get(CONFIGURATION_COPY_TO))
+                || configuration.get(CONFIGURATION_COPY_TO).startsWith(configuration.get(CONFIGURATION_PATH))) {
+            throw new InvalidParameterException("An error occured while creating the task. Incompatibility between Path parameter and CopyTo parameter.");
+        }
     }
 
     @Override

@@ -56,7 +56,6 @@ public enum Command {;
             /*- If a tache is invalid, the program quit
               - If the configuration file reference a non existing class, the guardian skip it
             */
-            //FIXME: Don't register the same path twice
             guardian.registerTache(tache);
         }
 

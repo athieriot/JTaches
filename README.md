@@ -73,7 +73,8 @@ Then, you have access to five things:
 Additionally if you use ConfiguredTache:
 
 + getConfiguration() provide a Map, loaded with the attributes in the Yaml file.
-+ ConfiguredTache constructor can take a list of String as second argument to indicate mandatory configuration parameters
++ ConfiguredTache constructor can take a list of String as second argument to indicate mandatory configuration parameters.
++ You can override additionalValidation(Map<String, String> configuration) to provide custom validation. Method executed after mandatory parameters validation.
 
 One thing you have to know with the configuration file is that the Taches are instantiated by SnakeYaml directly.
 So, if you respect the interface and the SnakeYaml documentation, you can override the default constructors to do whatever you want.

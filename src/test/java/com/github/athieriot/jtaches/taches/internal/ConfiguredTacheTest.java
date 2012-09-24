@@ -81,6 +81,16 @@ public class ConfiguredTacheTest {
 
         assertFalse(new DummyConfiguredTache(null).validateConfiguration(configMap, mandatoryList));
     }
+
+    @Test(expectedExceptions = InvalidParameterException.class)
+    public void a_configured_tache_must_block_on_additional_validation() throws Exception {
+        Map<String, String> expectedConfiguration = newHashMap();
+        expectedConfiguration.put("path", ".");
+        expectedConfiguration.put("addonValidator", "");
+
+        DummyConfiguredTache configuredTache = new DummyConfiguredTache(expectedConfiguration);
+    }
+
     private class DummyConfiguredTache extends ConfiguredTache {
         protected DummyConfiguredTache(Map<String, String> configuration) {
             super(configuration);
@@ -89,6 +99,10 @@ public class ConfiguredTacheTest {
             super(configuration, mandatory);
         }
 
+        @Override
+        protected void additionalValidation(Map<String, String> configuration) {
+            if(configuration != null && configuration.containsKey("addonValidator")) {throw new InvalidParameterException();}
+        }
         @Override
         public void onCreate(WatchEvent<?> event) {}
         @Override

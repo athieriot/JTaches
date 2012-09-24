@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.StandardWatchEventKinds;
+import java.security.InvalidParameterException;
 import java.util.Map;
 
 import static com.github.athieriot.jtaches.command.Configuration.CONFIGURATION_PATH;
@@ -140,5 +141,23 @@ public class CopyTacheTest {
                 get("ghost/", from.getName()))); //
 
         assertFalse(new File(toTemp + "/bollocs/ghost/" + from.getName()).exists());
+    }
+
+    @Test(expectedExceptions = InvalidParameterException.class)
+    public void copy_tache_must_not_create_if_copyTo_include_in_path() {
+        Map<String, String> bad_map = newHashMap();
+        bad_map.put(CONFIGURATION_PATH, toTemp + "/un/deux");
+        bad_map.put(CONFIGURATION_COPY_TO, toTemp + "/un/");
+
+        new CopyTache(bad_map);
+    }
+
+    @Test(expectedExceptions = InvalidParameterException.class)
+    public void copy_tache_must_not_create_if_path_include_in_copyTo() {
+        Map<String, String> bad_map = newHashMap();
+        bad_map.put(CONFIGURATION_PATH, toTemp + "/un");
+        bad_map.put(CONFIGURATION_COPY_TO, toTemp + "/un/deux");
+
+        new CopyTache(bad_map);
     }
 }
