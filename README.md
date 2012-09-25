@@ -82,5 +82,4 @@ So, if you respect the interface and the SnakeYaml documentation, you can overri
 Known issues
 ------------
 
-+ Executing multiple Taches on the same directory is broken: [https://github.com/athieriot/JTaches/issues/17](https://github.com/athieriot/JTaches/issues/17)
 + If a watch directory is deleted, the entire watcher service fall: [https://github.com/athieriot/JTaches/issues/16](https://github.com/athieriot/JTaches/issues/16)

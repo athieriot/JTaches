@@ -1,6 +1,8 @@
 package com.github.athieriot.jtaches;
 
 import com.github.athieriot.jtaches.command.CommandArgs;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -14,9 +16,9 @@ import java.util.Map;
 import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.CommandArgs.DEFAULT_RECURSIVE;
-import static com.github.athieriot.jtaches.utils.EventUtils.relativizedEvent;
+import static com.github.athieriot.jtaches.utils.GuardianUtils.pairCollectionAsMap;
+import static com.github.athieriot.jtaches.utils.GuardianUtils.relativizedEvent;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.walkFileTree;
 import static java.nio.file.Paths.get;
@@ -36,7 +38,7 @@ public class Guardian {
     //TODO: Exploded this system in other classes maybe
     //TODO: More Javadoc
     //TODO: Too much stateful for my tastes
-    private Map<WatchKey, Pair<Path, Tache>> globalWatchKeys = newHashMap();
+    private Multimap<Tache, Pair<WatchKey, Path>> globalStorage = ArrayListMultimap.create();
 
     private List<Tache> taches = newArrayList();
 
@@ -108,7 +110,7 @@ public class Guardian {
     }
     void registerDirectory(Path path, Path globalPath, Tache tache) throws IOException {
         WatchKey key = path.register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW);
-        getGlobalWatchKeys().put(key, new ImmutablePair<Path, Tache>(globalPath.relativize(path), tache));
+        getGlobalStorage().put(tache, new ImmutablePair(key, globalPath.relativize(path)));
 
         debug("Register path: " + path);
     }
@@ -150,7 +152,7 @@ public class Guardian {
     }
     WatchEvent<?> decoratedEvent(WatchEvent<?> event, WatchKey key) {
         if(getGlobalWatchKeys().containsKey(key)) {
-            return relativizedEvent(event, getGlobalWatchKeys().get(key).getLeft());
+            return relativizedEvent(event, getGlobalWatchKeys().get(key));
         } else {
             info("No trace of this watch key: " + key.toString());
             return event;
@@ -163,7 +165,7 @@ public class Guardian {
     }
     void dispatchFilteredByTache(WatchEvent<?> event, WatchKey localKey) throws IOException {
         for(Tache tache : taches) {
-            if(localKey == null || tache.equals(getGlobalWatchKeys().get(localKey).getRight())) {
+            if(localKey == null || getGlobalWatchKeys(tache).containsKey(localKey)) {
                 registerNewDirectory(event, tache);
                 fire(event, tache);
             }
@@ -198,8 +200,14 @@ public class Guardian {
         info("Overflow detected. You may have lost one or more event calls.");
     }
 
-    Map<WatchKey, Pair<Path, Tache>> getGlobalWatchKeys() {
-        return globalWatchKeys;
+    Multimap<Tache, Pair<WatchKey, Path>> getGlobalStorage() {
+        return globalStorage;
+    }
+    Map<WatchKey, Path> getGlobalWatchKeys() {
+        return pairCollectionAsMap(getGlobalStorage().values());
+    }
+    Map<WatchKey, Path> getGlobalWatchKeys(Tache tache) {
+        return pairCollectionAsMap(getGlobalStorage().get(tache));
     }
     private void onCancel(WatchKey key) throws IOException {
         info("Watcher no longer valid. Closing.");

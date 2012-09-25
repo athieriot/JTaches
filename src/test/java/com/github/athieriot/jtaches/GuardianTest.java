@@ -1,5 +1,9 @@
 package com.github.athieriot.jtaches;
 
+import com.github.athieriot.jtaches.utils.GuardianUtils;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -10,11 +14,9 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.security.InvalidParameterException;
-import java.util.Map;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Paths.get;
@@ -229,6 +231,54 @@ public class GuardianTest {
         verify(guardian, atLeastOnce()).cancel();
     }
 
+    @Test(timeOut = 2000)
+    public void a_guardian_must_watch_sub_file_creation_for_two_different_tasks() throws IOException, InterruptedException {
+        final Guardian guardian = spy(Guardian.create());
+        createDirectories(get(temporary_directory.toString(), "src", "main"));
+
+        Tache cancelling = spy(new Tache() {
+            public Path getPath() {return temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        });
+        Tache expected = spy(new Tache() {
+            public Path getPath() {return temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        });
+        guardian.registerTache(cancelling, true);
+        guardian.registerTache(expected, true);
+
+        Thread creatorThread = new Thread(
+                new Runnable() {
+                    public void run() {
+                        while(true) {
+                            try {
+                                createFile(get(temporary_directory.toString(), "src", "main", "hopeyouarewatchingforbothofus"));
+                            } catch (IOException e) {}
+                        }
+                    }
+                }
+        );
+        creatorThread.start();
+
+        guardian.watch(1500L);
+
+        verify(cancelling).onCreate(any(WatchEvent.class));
+        verify(expected).onCreate(any(WatchEvent.class));
+        verify(guardian, atLeastOnce()).cancel();
+    }
+
     @Test
     public void a_guardian_must_fire_onCreate_events() throws IOException {
         Guardian guardian = Guardian.create();
@@ -310,17 +360,17 @@ public class GuardianTest {
     @Test
     public void decorate_an_event_should_relativize_the_context_if_key_present() throws IOException {
         Guardian guardian = spy(Guardian.create());
-        Map<WatchKey, Path> map = newHashMap();
-        doReturn(map).when(guardian).getGlobalWatchKeys();
+        Multimap<Tache, Pair<WatchKey, Path>> multimap = ArrayListMultimap.create();
+        doReturn(multimap).when(guardian).getGlobalStorage();
 
         Path relativePath = get("src/main");
         Path globalPath = get("src");
-        guardian.registerDirectory(relativePath, globalPath, null);
+        guardian.registerDirectory(relativePath, globalPath, new DummyTache());
 
         WatchEvent<?> event = (WatchEvent<?>) newWatchEvent(ENTRY_CREATE);
 
         Path expectedContext = get("main", event.context().toString());
-        WatchEvent<?> decoratedEvent = guardian.decoratedEvent(event, map.keySet().iterator().next());
+        WatchEvent<?> decoratedEvent = guardian.decoratedEvent(event, GuardianUtils.pairCollectionAsMap(multimap.values()).keySet().iterator().next());
 
         assertEquals(expectedContext, decoratedEvent.context());
     }
