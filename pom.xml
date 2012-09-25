@@ -4,11 +4,37 @@
 
    <groupId>com.github.athieriot</groupId>
    <artifactId>jtaches</artifactId>
-   <version>0.1-SNAPSHOT</version>
+   <version>1.0.0-SNAPSHOT</version>
    <packaging>jar</packaging>
+
+   <parent>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>7</version>
+   </parent>
 
    <name>jtaches</name>
    <url>https://github.com/athieriot/JTaches</url>
+   <scm>
+      <connection>scm:git:git@github.com:athieriot/JTaches.git</connection>
+      <developerConnection>scm:git:git@github.com:athieriot/JTaches.git</developerConnection>
+      <url>git@github.com:athieriot/JTaches.git</url>
+   </scm>
+
+   <licenses>
+      <license>
+         <name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
+         <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+   <developers>
+      <developer>
+         <id>a.thieriot</id>
+         <name>Aurélien Thieriot</name>
+         <email>a.thieriot@gmail.com</email>
+      </developer>
+   </developers>
 
    <properties>
       <!-- General -->
