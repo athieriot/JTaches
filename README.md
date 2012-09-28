@@ -9,16 +9,29 @@ About
 JTaches provides a Java way to execute tasks on file events.
 Mostly inspired by the [Guard](https://github.com/guard/guard/) ruby gem.
 
+Binaries
+--------
+
+There is not yet an easy and fast way to install JTaches.
+However, you can find the binary pre-compiled with all needed dependencies on the [Sonatype](http://search.maven.org/#search%7Cga%7C1%7Cjtaches) repository:
+[jtaches-1.0.0-jar-with-dependencies.jar](http://search.maven.org/remotecontent?filepath=com/github/athieriot/jtaches/1.0.0/jtaches-1.0.0-jar-with-dependencies.jar)
+
+Then you just need to execute:
+
+        java -jar jtaches-1.0.0-jar-with-dependencies.jar -h
+
+Example of shell launcher: [https://github.com/athieriot/JTaches/blob/master/jtaches](https://github.com/athieriot/JTaches/blob/master/jtaches)
+
 Sources
 -------
 
-Until we find a better way to deploy it, you have to compile JTaches yourself.
+If you absolutely want the latest version, you will have to compile JTaches yourself.
 Download the sources via git or directly: https://github.com/athieriot/JTaches/tarball/master
 
         mvn clean install
 
         ./jtaches -h
-
+        
 Usage
 -----
 
@@ -63,6 +76,16 @@ Hack
 
 If you want to build a Tache, you need to write a new class implementing the Tache interface.
 ConfiguredTache is just an abstract class made to ease the work.
+
+Installation via Maven:
+
+
+        <dependency>
+                <groupId>com.github.athieriot</groupId>
+                <artifactId>jtaches</artifactId>
+                <version>1.0.0</version>
+                <scope>test</scope>
+        </dependency>
 
 Then, you have access to five things:
 
