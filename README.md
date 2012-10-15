@@ -3,6 +3,8 @@ JTaches
 
 [![Build Status](https://secure.travis-ci.org/athieriot/JTaches.png)](http://travis-ci.org/athieriot/JTaches)
 
+![](http://dl.dropbox.com/u/4955384/jtaches.png)
+
 About
 -----
 
