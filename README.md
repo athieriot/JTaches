@@ -12,8 +12,12 @@ Mostly inspired by the [Guard](https://github.com/guard/guard/) ruby gem.
 Binaries
 --------
 
-There is not yet an easy and fast way to install JTaches.
-However, you can find the binary pre-compiled with all needed dependencies on the [Sonatype](http://search.maven.org/#search%7Cga%7C1%7Cjtaches) repository:
+Thanks to this Protip: [http://coderwall.com/p/ssuaxa](http://coderwall.com/p/ssuaxa), you can now download a Linux executable and just use it (you still need Java):
+
+        wget https://github.com/downloads/athieriot/JTaches/jtaches-1.0.0
+        ./jtaches-1.0.0 -h
+
+For all other cases, you can find a JAR pre-compiled with all needed dependencies on the [Sonatype](http://search.maven.org/#search%7Cga%7C1%7Cjtaches) repository:
 [jtaches-1.0.0-jar-with-dependencies.jar](http://search.maven.org/remotecontent?filepath=com/github/athieriot/jtaches/1.0.0/jtaches-1.0.0-jar-with-dependencies.jar)
 
 Then you just need to execute:
@@ -35,7 +39,11 @@ Download the sources via git or directly: https://github.com/athieriot/JTaches/t
 Usage
 -----
 
-You have to provide a configuration file.
+        ./jtaches
+
+And that's it.
+
+But you have to provide a configuration file first.
 By default, the program search for **.jtaches.yaml** in the current directory but you can override it from the command line.
 
         ./jtaches -file whatever.yaml
@@ -52,6 +60,8 @@ The configuration need to be in Yaml format and the content look like this:
 
 A list of Taches classes (in classpath) containing a list of properties.
 The syntax is borrow to [SnakeYaml](http://code.google.com/p/snakeyaml/wiki/Documentation) as it is the parser used internally.
+
+Full example here: [https://github.com/athieriot/JTaches/blob/master/.jtaches.yaml](https://github.com/athieriot/JTaches/blob/master/.jtaches.yaml)
 
 Taches
 ------
