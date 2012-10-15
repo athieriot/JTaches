@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Jtaches by athieriot</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Jtaches</h1>
+        <h2>JTaches provides a Java way to execute tasks on file events. Mostly inspired by the Guard ruby gem</h2>
+        <a href="https://github.com/athieriot/JTaches" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>JTaches</h1>
+
+<p><img src="http://dl.dropbox.com/u/4955384/jtaches.png" alt=""></p>
+
+<h2>About</h2>
+
+<p>JTaches provides a Java way to execute tasks on file events.
+Mostly inspired by the <a href="https://github.com/guard/guard/">Guard</a> ruby gem.</p>
+
+<h2>Binaries</h2>
+
+<p>Thanks to this Protip: <a href="http://coderwall.com/p/ssuaxa">http://coderwall.com/p/ssuaxa</a>, you can now download a Linux executable and just use it (you still need Java):</p>
+
+<pre><code>    wget https://github.com/downloads/athieriot/JTaches/jtaches-1.0.0
+    chmod +x jtaches-1.0.0
+    ./jtaches-1.0.0 -h
+</code></pre>
+
+<p>For all other cases, you can find a JAR pre-compiled with all needed dependencies on the <a href="http://search.maven.org/#search%7Cga%7C1%7Cjtaches">Sonatype</a> repository:
+<a href="http://search.maven.org/remotecontent?filepath=com/github/athieriot/jtaches/1.0.0/jtaches-1.0.0-jar-with-dependencies.jar">jtaches-1.0.0-jar-with-dependencies.jar</a></p>
+
+<p>Then you just need to execute:</p>
+
+<pre><code>    java -jar jtaches-1.0.0-jar-with-dependencies.jar -h
+</code></pre>
+
+<p>Example of shell launcher: <a href="https://github.com/athieriot/JTaches/blob/master/jtaches">https://github.com/athieriot/JTaches/blob/master/jtaches</a></p>
+
+<h2>Sources</h2>
+
+<p>If you absolutely want the latest version, you will have to compile JTaches yourself.
+Download the sources via git or directly: <a href="https://github.com/athieriot/JTaches/tarball/master">https://github.com/athieriot/JTaches/tarball/master</a></p>
+
+<pre><code>    mvn clean install
+
+    ./jtaches -h
+</code></pre>
+
+<h2>Usage</h2>
+
+<pre><code>    ./jtaches
+</code></pre>
+
+<p>And that's it.</p>
+
+<p>But you have to provide a configuration file first.
+By default, the program search for <strong>.jtaches.yaml</strong> in the current directory but you can override it from the command line.</p>
+
+<pre><code>    ./jtaches -file whatever.yaml
+</code></pre>
+
+<h2>Configuration</h2>
+
+<p>The configuration need to be in Yaml format and the content look like this:</p>
+
+<pre><code>    - !!com.github.athieriot.jtaches.taches.ScriptTache [{
+        path: ".",
+        script: "notify-send &lt;path&gt;/&lt;file&gt;/&lt;event&gt;",
+    }]
+</code></pre>
+
+<p>A list of Taches classes (in classpath) containing a list of properties.
+The syntax is borrow to <a href="http://code.google.com/p/snakeyaml/wiki/Documentation">SnakeYaml</a> as it is the parser used internally.</p>
+
+<p>Full example here: <a href="https://github.com/athieriot/JTaches/blob/master/.jtaches.yaml">https://github.com/athieriot/JTaches/blob/master/.jtaches.yaml</a></p>
+
+<h2>Taches</h2>
+
+<p>For now, you have access to three Taches:</p>
+
+<ul>
+<li>
+<p><strong>com.github.athieriot.jtaches.taches.SysoutTache</strong> : Display envent details in the console.</p>
+
+<ul>
+<li>"path", the directory to watch</li>
+</ul>
+</li>
+<li>
+<p><strong>com.github.athieriot.jtaches.taches.CopyTache</strong> : Copy watched files to another location.</p>
+
+<ul>
+<li>"path", the directory to watch</li>
+<li>"copyTo", where to copy the files</li>
+<li>"makePath", indicate to create or not the copy path if not exists (optional, default true)</li>
+</ul>
+</li>
+<li>
+<p><strong>com.github.athieriot.jtaches.taches.ScriptTache</strong> : Display envent details in the console.</p>
+
+<ul>
+<li>"path", the directory to watch</li>
+<li>"script", the script to execute (Patterns <code>&lt;path&gt;</code>, <code>&lt;file&gt;</code> and <code>&lt;event&gt;</code> while be replaced by real values)</li>
+<li>"workingDirectory", the working dir where to execute the script (optional)</li>
+</ul>
+</li>
+</ul><h2>Hack</h2>
+
+<p>If you want to build a Tache, you need to write a new class implementing the Tache interface.
+ConfiguredTache is just an abstract class made to ease the work.</p>
+
+<p>Installation via Maven:</p>
+
+<pre><code>    &lt;dependency&gt;
+            &lt;groupId&gt;com.github.athieriot&lt;/groupId&gt;
+            &lt;artifactId&gt;jtaches&lt;/artifactId&gt;
+            &lt;version&gt;1.0.0&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+</code></pre>
+
+<p>Then, you have access to five things:</p>
+
+<ul>
+<li>getPath() that you need to implement to provide the path to watch.</li>
+<li>onCreate(), onDelete() and onModify() which are events callbacks and have to be implemented. See <a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/WatchEvent.html">WatchEvent</a>.</li>
+<li>Log is a static logging object from which you have access to info(), debug(), etc... See <a href="http://code.google.com/p/minlog/">Minlog</a>. The default log level in INFO and DEBUG in verbose mode.</li>
+</ul><p>Additionally if you use ConfiguredTache:</p>
+
+<ul>
+<li>getConfiguration() provide a Map, loaded with the attributes in the Yaml file.</li>
+<li>ConfiguredTache constructor can take a list of String as second argument to indicate mandatory configuration parameters.</li>
+<li>You can override additionalValidation(Map configuration) to provide custom validation. Method executed after mandatory parameters validation.</li>
+</ul><p>One thing you have to know with the configuration file is that the Taches are instantiated by SnakeYaml directly.
+So, if you respect the interface and the SnakeYaml documentation, you can override the default constructors to do whatever you want.</p>
+
+<h2>Known issues</h2>
+
+<ul>
+<li>If a watch directory is deleted, the entire watcher service fall: <a href="https://github.com/athieriot/JTaches/issues/16">https://github.com/athieriot/JTaches/issues/16</a>
+</li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/athieriot/JTaches/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/athieriot/JTaches/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/athieriot/JTaches"></a> is maintained by <a href="https://github.com/athieriot">athieriot</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
