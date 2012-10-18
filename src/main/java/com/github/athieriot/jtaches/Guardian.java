@@ -1,24 +1,16 @@
 package com.github.athieriot.jtaches;
 
 import com.github.athieriot.jtaches.command.CommandArgs;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.InvalidParameterException;
-import java.util.List;
-import java.util.Map;
 
 import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.CommandArgs.DEFAULT_RECURSIVE;
-import static com.github.athieriot.jtaches.utils.GuardianUtils.pairCollectionAsMap;
 import static com.github.athieriot.jtaches.utils.GuardianUtils.relativizedEvent;
-import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.walkFileTree;
 import static java.nio.file.Paths.get;
@@ -31,16 +23,8 @@ public class Guardian {
 
     private CommandArgs commandArgs;
 
-    /**
-     * Corresponding Map between subdirectory registration and relative path.
-     * Used internally by the Guardian to make recursive watching working
-     */
-    //TODO: Exploded this system in other classes maybe
-    //TODO: More Javadoc
     //TODO: Too much stateful for my tastes
-    private Multimap<Tache, Pair<WatchKey, Path>> globalStorage = ArrayListMultimap.create();
-
-    private List<Tache> taches = newArrayList();
+    private WatchingStore<Tache, Path> globalStorage = new WatchingStore<>();
 
     public Guardian() throws IOException {
         FileSystem fileSystem = FileSystems.getDefault();
@@ -90,7 +74,6 @@ public class Guardian {
             registerTacheDirectory(tache);
         }
 
-        this.taches.add(tache);
         info("Register tache: " + tacheToString(tache));
     }
 
@@ -110,7 +93,7 @@ public class Guardian {
     }
     void registerDirectory(Path path, Path globalPath, Tache tache) throws IOException {
         WatchKey key = path.register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW);
-        getGlobalStorage().put(tache, new ImmutablePair(key, globalPath.relativize(path)));
+        getGlobalStorage().store(tache, key, globalPath.relativize(path));
 
         debug("Register path: " + path);
     }
@@ -119,7 +102,7 @@ public class Guardian {
         watch(null);
     }
     public void watch(Long timeout) throws IOException, InterruptedException {
-        if(taches.isEmpty()) {
+        if(globalStorage.isEmpty()) {
             info("No task registered.");
         } else {
             waitingForEvents(timeout);
@@ -151,8 +134,8 @@ public class Guardian {
         return (System.currentTimeMillis() - start) >= timeout;
     }
     WatchEvent<?> decoratedEvent(WatchEvent<?> event, WatchKey key) {
-        if(getGlobalWatchKeys().containsKey(key)) {
-            return relativizedEvent(event, getGlobalWatchKeys().get(key));
+        if(getGlobalStorage().isWatched(key)) {
+            return relativizedEvent(event, getGlobalStorage().retreiveMetadata(key));
         } else {
             info("No trace of this watch key: " + key.toString());
             return event;
@@ -164,8 +147,8 @@ public class Guardian {
         dispatchFilteredByTache(event, null);
     }
     void dispatchFilteredByTache(WatchEvent<?> event, WatchKey localKey) throws IOException {
-        for(Tache tache : taches) {
-            if(localKey == null || getGlobalWatchKeys(tache).containsKey(localKey)) {
+        for(Tache tache : getGlobalStorage().retrieveItems()) {
+            if(localKey == null || getGlobalStorage().isWatchedByItem(tache, localKey)) {
                 registerNewDirectory(event, tache);
                 fire(event, tache);
             }
@@ -200,14 +183,8 @@ public class Guardian {
         info("Overflow detected. You may have lost one or more event calls.");
     }
 
-    Multimap<Tache, Pair<WatchKey, Path>> getGlobalStorage() {
+    WatchingStore<Tache, Path> getGlobalStorage() {
         return globalStorage;
-    }
-    Map<WatchKey, Path> getGlobalWatchKeys() {
-        return pairCollectionAsMap(getGlobalStorage().values());
-    }
-    Map<WatchKey, Path> getGlobalWatchKeys(Tache tache) {
-        return pairCollectionAsMap(getGlobalStorage().get(tache));
     }
     private void onCancel(WatchKey key) throws IOException {
         info("Watcher no longer valid. Closing.");

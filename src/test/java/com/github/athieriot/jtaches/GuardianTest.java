@@ -1,9 +1,5 @@
 package com.github.athieriot.jtaches;
 
-import com.github.athieriot.jtaches.utils.GuardianUtils;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -12,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
 import java.security.InvalidParameterException;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
@@ -279,6 +274,42 @@ public class GuardianTest {
         verify(guardian, atLeastOnce()).cancel();
     }
 
+//    @Test(timeOut = 2000)
+//    public void a_guardian_must_not_stop_if_a_sub_directory_is_deleted() throws IOException, InterruptedException {
+//        final Guardian guardian = spy(Guardian.create());
+//        createDirectories(get(temporary_directory.toString(), "src", "main"));
+//
+//        Tache cancelling = spy(new Tache() {
+//            public Path getPath() {return temporary_directory;}
+//            public void onCreate(WatchEvent<?> event) {
+//                try {
+//                    guardian.cancel();
+//                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+//            }
+//            public void onDelete(WatchEvent<?> event) {}
+//            public void onModify(WatchEvent<?> event) {}
+//        });
+//        guardian.registerTache(cancelling, true);
+//
+//        Thread creatorThread = new Thread(
+//                new Runnable() {
+//                    public void run() {
+//                        while(true) {
+//                            try {
+//                                delete(get(temporary_directory.toString(), "src", "main"));
+//                            } catch (IOException e) {}
+//                        }
+//                    }
+//                }
+//        );
+//        creatorThread.start();
+//
+//        guardian.watch(1500L);
+//
+//        verify(cancelling).onDelete(any(WatchEvent.class));
+//        verify(guardian, never()).cancel();
+//    }
+
     @Test
     public void a_guardian_must_fire_onCreate_events() throws IOException {
         Guardian guardian = Guardian.create();
@@ -360,8 +391,8 @@ public class GuardianTest {
     @Test
     public void decorate_an_event_should_relativize_the_context_if_key_present() throws IOException {
         Guardian guardian = spy(Guardian.create());
-        Multimap<Tache, Pair<WatchKey, Path>> multimap = ArrayListMultimap.create();
-        doReturn(multimap).when(guardian).getGlobalStorage();
+        WatchingStore<Tache, Path> testStore = new WatchingStore<>();
+        doReturn(testStore).when(guardian).getGlobalStorage();
 
         Path relativePath = get("src/main");
         Path globalPath = get("src");
@@ -370,7 +401,7 @@ public class GuardianTest {
         WatchEvent<?> event = (WatchEvent<?>) newWatchEvent(ENTRY_CREATE);
 
         Path expectedContext = get("main", event.context().toString());
-        WatchEvent<?> decoratedEvent = guardian.decoratedEvent(event, GuardianUtils.pairCollectionAsMap(multimap.values()).keySet().iterator().next());
+        WatchEvent<?> decoratedEvent = guardian.decoratedEvent(event, testStore.retrieveWatchKeys().iterator().next());
 
         assertEquals(expectedContext, decoratedEvent.context());
     }
