@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.ClosedWatchServiceException;
 import java.security.InvalidParameterException;
 import java.util.List;
 
@@ -36,6 +37,9 @@ public enum Command {;
             info("Unable to build a tache for this configuration:");
             info("\t - " + ye.getMessage());
             info("\t - " + getRootCauseMessage(ye));
+            System.exit(1);
+        } catch (ClosedWatchServiceException cse) {
+            info("Guardian is closing.");
             System.exit(1);
         }
     }

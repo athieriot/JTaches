@@ -77,6 +77,7 @@ public class Guardian {
         info("Register tache: " + tacheToString(tache));
     }
 
+    //TODO: Refactor
     private void registerTacheDirectories(final Tache tache) throws IOException {
         SimpleFileVisitor<Path> directoryRegister = new SimpleFileVisitor<Path>() {
             @Override
@@ -93,7 +94,8 @@ public class Guardian {
     }
     void registerDirectory(Path path, Path globalPath, Tache tache) throws IOException {
         WatchKey key = path.register(this.watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW);
-        getGlobalStorage().store(tache, key, globalPath.relativize(path));
+        boolean rootPath = path.equals(globalPath);
+        getGlobalStorage().store(tache, key, globalPath.relativize(path), rootPath);
 
         debug("Register path: " + path);
     }
@@ -108,25 +110,25 @@ public class Guardian {
             waitingForEvents(timeout);
         }
     }
-    public void cancel() throws IOException {
-        watchService.close();
-    }
 
     private void waitingForEvents(Long timeout) throws IOException, InterruptedException {
         Long start = System.currentTimeMillis();
 
         while (timeout == null || !isTimeoutOverRun(start, timeout)) {
-            WatchKey localKey = watchService.poll();
+            try {
+                WatchKey localKey = watchService.poll();
 
-            if(localKey != null) {
-                for (final WatchEvent<?> event : localKey.pollEvents()) {
-                    dispatchFilteredByTache(decoratedEvent(event, localKey), localKey);
-                }
+                if(localKey != null) {
+                    for (final WatchEvent<?> event : localKey.pollEvents()) {
+                        dispatchFilteredByTache(decoratedEvent(event, localKey), localKey);
+                    }
 
-                if (!localKey.reset()) {
-                    onCancel(localKey);
-                    break;
+                    if (!localKey.reset()) {
+                        onCancel(localKey);
+                    }
                 }
+            } catch(ClosedWatchServiceException cse) {
+                break;
             }
         }
     }
@@ -183,15 +185,23 @@ public class Guardian {
         info("Overflow detected. You may have lost one or more event calls.");
     }
 
+    public void cancel() throws IOException {
+        info("Watcher is no longer valid. Closing.");
+        watchService.close();
+    }
+    private void onCancel(WatchKey localKey) throws IOException {
+        //FIXME: Remove task from the store until the last one
+        if(getGlobalStorage().hasFlag(localKey)) {
+            cancel();
+        }
+
+        info("Release this watchkey from the Guardian.");
+        getGlobalStorage().removeWatchKey(localKey);
+    }
+
     WatchingStore<Tache, Path> getGlobalStorage() {
         return globalStorage;
     }
-    private void onCancel(WatchKey key) throws IOException {
-        info("Watcher no longer valid. Closing.");
-        key.cancel();
-        cancel();
-    }
-
     public void setCommandArgs(CommandArgs commandArgs) {
         this.commandArgs = commandArgs;
     }

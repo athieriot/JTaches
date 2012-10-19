@@ -12,8 +12,7 @@ import java.security.InvalidParameterException;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
-import static java.nio.file.Files.createDirectories;
-import static java.nio.file.Files.createFile;
+import static java.nio.file.Files.*;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static org.mockito.Mockito.*;
@@ -274,41 +273,41 @@ public class GuardianTest {
         verify(guardian, atLeastOnce()).cancel();
     }
 
-//    @Test(timeOut = 2000)
-//    public void a_guardian_must_not_stop_if_a_sub_directory_is_deleted() throws IOException, InterruptedException {
-//        final Guardian guardian = spy(Guardian.create());
-//        createDirectories(get(temporary_directory.toString(), "src", "main"));
-//
-//        Tache cancelling = spy(new Tache() {
-//            public Path getPath() {return temporary_directory;}
-//            public void onCreate(WatchEvent<?> event) {
-//                try {
-//                    guardian.cancel();
-//                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-//            }
-//            public void onDelete(WatchEvent<?> event) {}
-//            public void onModify(WatchEvent<?> event) {}
-//        });
-//        guardian.registerTache(cancelling, true);
-//
-//        Thread creatorThread = new Thread(
-//                new Runnable() {
-//                    public void run() {
-//                        while(true) {
-//                            try {
-//                                delete(get(temporary_directory.toString(), "src", "main"));
-//                            } catch (IOException e) {}
-//                        }
-//                    }
-//                }
-//        );
-//        creatorThread.start();
-//
-//        guardian.watch(1500L);
-//
-//        verify(cancelling).onDelete(any(WatchEvent.class));
-//        verify(guardian, never()).cancel();
-//    }
+    @Test(timeOut = 2000)
+    public void a_guardian_must_not_stop_if_a_sub_directory_is_deleted() throws IOException, InterruptedException {
+        final Guardian guardian = spy(Guardian.create());
+        createDirectories(get(temporary_directory.toString(), "src", "main"));
+
+        Tache cancelling = spy(new Tache() {
+            public Path getPath() {return temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {}
+            public void onDelete(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onModify(WatchEvent<?> event) {}
+        });
+        guardian.registerTache(cancelling, true);
+
+        Thread creatorThread = new Thread(
+                new Runnable() {
+                    public void run() {
+                        while(true) {
+                            try {
+                                delete(get(temporary_directory.toString(), "src", "main"));
+                            } catch (IOException e) {}
+                        }
+                    }
+                }
+        );
+        creatorThread.start();
+
+        guardian.watch();
+
+        verify(cancelling).onDelete(any(WatchEvent.class));
+        verify(guardian).cancel();
+    }
 
     @Test
     public void a_guardian_must_fire_onCreate_events() throws IOException {

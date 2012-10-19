@@ -34,7 +34,7 @@ public class WatchingStoreTest {
         initMocks(this);
 
         testStore.store(TEST_ITEM, watchKey, TEST_META);
-        testStore.store(TEST_ITEM, watchKey2, TEST_META2);
+        testStore.store(TEST_ITEM, watchKey2, TEST_META2, true);
         testStore.store(TEST_ITEM2, watchKey3, TEST_META3);
     }
 
@@ -79,5 +79,11 @@ public class WatchingStoreTest {
     public void testIsEmpty() throws Exception {
         assertFalse(testStore.isEmpty());
         assertTrue(new WatchingStore<String, String>().isEmpty());
+    }
+
+    @Test
+    public void testFlagFeature() {
+        assertFalse(testStore.hasFlag(watchKey));
+        assertTrue(testStore.hasFlag(watchKey2));
     }
 }
