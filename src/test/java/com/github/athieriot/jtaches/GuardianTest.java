@@ -170,13 +170,14 @@ public class GuardianTest {
         );
         creatorThread.start();
 
-        guardian.watch(1500L);
+        guardian.watch(1700L);
 
         verify(cancelling, never()).onCreate(any(WatchEvent.class));
         verify(guardian, never()).cancel();
     }
 
-    @Test(timeOut = 2000)
+    //TODO: Optimizations needed
+    @Test(timeOut = 2500)
     public void a_guardian_must_not_watch_sub_file_creation_if_not_related_task() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         createDirectories(get(temporary_directory.toString(), "src", "main"));
@@ -218,7 +219,7 @@ public class GuardianTest {
         );
         creatorThread.start();
 
-        guardian.watch(1500L);
+        guardian.watch();
 
         verify(cancelling).onCreate(any(WatchEvent.class));
         verify(notexpected, never()).onCreate(any(WatchEvent.class));
@@ -266,7 +267,7 @@ public class GuardianTest {
         );
         creatorThread.start();
 
-        guardian.watch(1500L);
+        guardian.watch();
 
         verify(cancelling).onCreate(any(WatchEvent.class));
         verify(expected).onCreate(any(WatchEvent.class));
