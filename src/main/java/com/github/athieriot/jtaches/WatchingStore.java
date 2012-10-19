@@ -95,7 +95,7 @@ public class WatchingStore<I, M> {
         watchKey.cancel();
     }
 
-    private class AdditionalMetadata<M> {
+    private final class AdditionalMetadata<M> {
 
         private M userMetadata;
 
