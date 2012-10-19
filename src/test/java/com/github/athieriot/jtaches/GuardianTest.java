@@ -170,7 +170,7 @@ public class GuardianTest {
         );
         creatorThread.start();
 
-        guardian.watch(1700L);
+        guardian.watch(1500L);
 
         verify(cancelling, never()).onCreate(any(WatchEvent.class));
         verify(guardian, never()).cancel();
@@ -219,7 +219,7 @@ public class GuardianTest {
         );
         creatorThread.start();
 
-        guardian.watch();
+        guardian.watch(2500L);
 
         verify(cancelling).onCreate(any(WatchEvent.class));
         verify(notexpected, never()).onCreate(any(WatchEvent.class));
