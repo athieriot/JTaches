@@ -177,7 +177,7 @@ public class GuardianTest {
     }
 
     //TODO: Optimizations needed
-    @Test(timeOut = 2500)
+    @Test(timeOut = 3000)
     public void a_guardian_must_not_watch_sub_file_creation_if_not_related_task() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         createDirectories(get(temporary_directory.toString(), "src", "main"));
@@ -226,7 +226,8 @@ public class GuardianTest {
         verify(guardian, atLeastOnce()).cancel();
     }
 
-    @Test(timeOut = 2000)
+    //TODO: Optimizations needed
+    @Test(timeOut = 3000)
     public void a_guardian_must_watch_sub_file_creation_for_two_different_tasks() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         createDirectories(get(temporary_directory.toString(), "src", "main"));
