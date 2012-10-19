@@ -144,7 +144,6 @@ public class Guardian {
         }
     }
 
-    //FIXME: If a watched directory is deleted, the watcher service stop
     void dispatch(WatchEvent<?> event) throws IOException {
         dispatchFilteredByTache(event, null);
     }

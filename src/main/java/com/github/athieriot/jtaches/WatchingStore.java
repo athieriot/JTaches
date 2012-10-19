@@ -90,7 +90,7 @@ public class WatchingStore<I, M> {
 
     //TODO: Test
     public void removeWatchKey(WatchKey watchKey) {
-        //TODO: Remove from items as well
+        //FIXME: Remove from items as well
         metadatas.remove(watchKey);
         watchKey.cancel();
     }
