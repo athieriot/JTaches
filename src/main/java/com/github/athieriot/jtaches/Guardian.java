@@ -113,34 +113,31 @@ public class Guardian {
 
     private void waitingForEvents(Long timeout) throws IOException, InterruptedException {
         Long start = System.currentTimeMillis();
+        WatchKey localKey;
 
         while (timeout == null || !isTimeoutOverRun(start, timeout)) {
             try {
-                WatchKey localKey = watchService.poll();
-
-                if(localKey != null) {
-                    for (final WatchEvent<?> event : localKey.pollEvents()) {
-                        dispatchFilteredByTache(decoratedEvent(event, localKey), localKey);
-                    }
-
-                    if (!localKey.reset()) {
-                        onCancel(localKey);
-                    }
-                }
+                localKey = watchService.poll();
             } catch(ClosedWatchServiceException cse) {
                 break;
             }
+
+            dealingWithEvents(localKey);
         }
     }
     private boolean isTimeoutOverRun(Long start, Long timeout) {
         return (System.currentTimeMillis() - start) >= timeout;
     }
-    WatchEvent<?> decoratedEvent(WatchEvent<?> event, WatchKey key) {
-        if(getGlobalStorage().isWatched(key)) {
-            return relativizedEvent(event, getGlobalStorage().retreiveMetadata(key));
-        } else {
-            info("No trace of this watch key: " + key.toString());
-            return event;
+
+    private void dealingWithEvents(WatchKey localKey)  throws IOException, InterruptedException {
+        if(localKey != null) {
+            for (final WatchEvent<?> event : localKey.pollEvents()) {
+                dispatchFilteredByTache(decoratedEvent(event, localKey), localKey);
+            }
+
+            if (!localKey.reset()) {
+                onCancel(localKey);
+            }
         }
     }
 
@@ -153,6 +150,15 @@ public class Guardian {
                 registerNewDirectory(event, tache);
                 fire(event, tache);
             }
+        }
+    }
+
+    WatchEvent<?> decoratedEvent(WatchEvent<?> event, WatchKey key) {
+        if(getGlobalStorage().isWatched(key)) {
+            return relativizedEvent(event, getGlobalStorage().retreiveMetadata(key));
+        } else {
+            info("No trace of this watch key: " + key.toString());
+            return event;
         }
     }
 
