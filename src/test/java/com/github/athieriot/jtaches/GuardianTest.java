@@ -276,7 +276,7 @@ public class GuardianTest {
     @Test(timeOut = 2000)
     public void a_guardian_must_not_stop_if_a_sub_directory_is_deleted() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
-        createDirectories(get(temporary_directory.toString(), "src", "main"));
+        createDirectories(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
 
         Tache cancelling = spy(new Tache() {
             public Path getPath() {return temporary_directory;}
@@ -295,7 +295,7 @@ public class GuardianTest {
                     public void run() {
                         while(true) {
                             try {
-                                delete(get(temporary_directory.toString(), "src", "main"));
+                                delete(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
                             } catch (IOException e) {}
                         }
                     }

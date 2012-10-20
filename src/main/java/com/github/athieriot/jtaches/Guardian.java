@@ -59,7 +59,7 @@ public class Guardian {
             }
         }
     }
-    //TODO: Move this in an utility class
+    //TODO: Move these in an utility class
     private boolean isTacheValid(Tache tache) {
         return tache.getPath() != null;
     }
