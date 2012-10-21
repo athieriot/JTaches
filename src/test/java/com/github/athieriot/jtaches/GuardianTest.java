@@ -9,12 +9,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.security.InvalidParameterException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertEquals;
@@ -69,72 +72,48 @@ public class GuardianTest {
     @Test(timeOut = 2000)
     public void a_guardian_must_watch_true_file_creation() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
+        Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
 
-        Tache cancelling = spy(new Tache() {
-            public Path getPath() {return temporary_directory;}
-            public void onCreate(WatchEvent<?> event) {
-                try {
-                    guardian.cancel();
-                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-            }
-            public void onDelete(WatchEvent<?> event) {}
-            public void onModify(WatchEvent<?> event) {}
-        });
-        guardian.registerTache(cancelling);
+        guardian.registerTache(testedTache);
 
-        Thread creatorThread = new Thread(
-            new Runnable() {
-                public void run() {
-                    while(true) {
-                        try {
-                            createFile(get(temporary_directory.toString(), "areyouwatchingtome"));
-                        } catch (IOException e) {}
-                    }
+        newSingleThreadExecutor().submit(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        createFile(get(temporary_directory.toString(), "areyouwatchingtome"));
+                    } catch (IOException e) {}
                 }
             }
-        );
-        creatorThread.start();
+        });
 
         guardian.watch();
 
-        verify(cancelling).onCreate(any(WatchEvent.class));
+        verify(testedTache).onCreate(any(WatchEvent.class));
         verify(guardian, atLeastOnce()).cancel();
     }
 
     @Test(timeOut = 2000)
     public void a_guardian_must_watch_true_sub_file_creation() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
+        Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
+
         createDirectories(get(temporary_directory.toString(), "src", "main"));
+        guardian.registerTache(testedTache, true);
 
-        Tache cancelling = spy(new Tache() {
-            public Path getPath() {return temporary_directory;}
-            public void onCreate(WatchEvent<?> event) {
-                try {
-                    guardian.cancel();
-                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-            }
-            public void onDelete(WatchEvent<?> event) {}
-            public void onModify(WatchEvent<?> event) {}
-        });
-        guardian.registerTache(cancelling, true);
-
-        Thread creatorThread = new Thread(
-                new Runnable() {
-                    public void run() {
-                        while(true) {
-                            try {
-                                createFile(get(temporary_directory.toString(), "src", "main", "areyouwatchingtome"));
-                            } catch (IOException e) {}
-                        }
-                    }
+        newSingleThreadExecutor().submit(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        createFile(get(temporary_directory.toString(), "src", "main", "areyouwatchingtome"));
+                    } catch (IOException e) {}
                 }
-        );
-        creatorThread.start();
+            }
+        });
 
         guardian.watch();
 
         ArgumentCaptor<WatchEvent> argument = ArgumentCaptor.forClass(WatchEvent.class);
-        verify(cancelling).onCreate(argument.capture());
+        verify(testedTache).onCreate(argument.capture());
         verify(guardian, atLeastOnce()).cancel();
 
         assertEquals(get("src/main/areyouwatchingtome"), argument.getValue().context());
@@ -143,169 +122,106 @@ public class GuardianTest {
     @Test(timeOut = 2000)
     public void a_guardian_must_not_watch_sub_file_creation_if_no_recursive() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
+        Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
+
         createDirectories(get(temporary_directory.toString(), "src", "main"));
+        guardian.registerTache(testedTache, false);
 
-        Tache cancelling = spy(new Tache() {
-            public Path getPath() {return temporary_directory;}
-            public void onCreate(WatchEvent<?> event) {
-                try {
-                    guardian.cancel();
-                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-            }
-            public void onDelete(WatchEvent<?> event) {}
-            public void onModify(WatchEvent<?> event) {}
-        });
-        guardian.registerTache(cancelling, false);
-
-        Thread creatorThread = new Thread(
-                new Runnable() {
-                    public void run() {
-                        while(true) {
-                            try {
-                                createFile(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtome"));
-                            } catch (IOException e) {}
-                        }
-                    }
+        newSingleThreadExecutor().submit(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        createFile(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtome"));
+                    } catch (IOException e) {}
                 }
-        );
-        creatorThread.start();
+            }
+        });
 
         guardian.watch(1700L);
 
-        verify(cancelling, never()).onCreate(any(WatchEvent.class));
+        verify(testedTache, never()).onCreate(any(WatchEvent.class));
         verify(guardian, never()).cancel();
     }
 
     @Test(timeOut = 2000)
     public void a_guardian_must_not_watch_sub_file_creation_if_not_related_task() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
+        Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
+        Tache notExpectedTache = spy(newCreateTache(guardian, another_temporary_directory));
+
         createDirectories(get(temporary_directory.toString(), "src", "main"));
         createDirectories(get(another_temporary_directory.toString(), "src", "main"));
 
-        Tache cancelling = spy(new Tache() {
-            public Path getPath() {return temporary_directory;}
-            public void onCreate(WatchEvent<?> event) {
-                try {
-                    guardian.cancel();
-                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-            }
-            public void onDelete(WatchEvent<?> event) {}
-            public void onModify(WatchEvent<?> event) {}
-        });
-        Tache notexpected = spy(new Tache() {
-            public Path getPath() {return another_temporary_directory;}
-            public void onCreate(WatchEvent<?> event) {
-                try {
-                    guardian.cancel();
-                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-            }
-            public void onDelete(WatchEvent<?> event) {}
-            public void onModify(WatchEvent<?> event) {}
-        });
-        guardian.registerTache(cancelling, true);
-        guardian.registerTache(notexpected, true);
+        guardian.registerTache(testedTache, true);
+        guardian.registerTache(notExpectedTache, true);
 
-        Thread creatorThread = new Thread(
-                new Runnable() {
-                    public void run() {
-                        while(true) {
-                            try {
-                                createFile(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtomybuddy"));
-                            } catch (IOException e) {}
-                        }
-                    }
+        newSingleThreadExecutor().submit(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        createFile(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtomybuddy"));
+                    } catch (IOException e) {}
                 }
-        );
-        creatorThread.start();
+            }
+        });
 
         guardian.watch(1700L);
 
-        verify(cancelling).onCreate(any(WatchEvent.class));
-        verify(notexpected, never()).onCreate(any(WatchEvent.class));
+        verify(testedTache).onCreate(any(WatchEvent.class));
+        verify(notExpectedTache, never()).onCreate(any(WatchEvent.class));
         verify(guardian, atLeastOnce()).cancel();
     }
 
     @Test(timeOut = 2000)
     public void a_guardian_must_watch_sub_file_creation_for_two_different_tasks() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
+        Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
+        Tache expectedTache = spy(newCreateTache(guardian, temporary_directory));
+
         createDirectories(get(temporary_directory.toString(), "src", "main"));
 
-        Tache cancelling = spy(new Tache() {
-            public Path getPath() {return temporary_directory;}
-            public void onCreate(WatchEvent<?> event) {
-                try {
-                    guardian.cancel();
-                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-            }
-            public void onDelete(WatchEvent<?> event) {}
-            public void onModify(WatchEvent<?> event) {}
-        });
-        Tache expected = spy(new Tache() {
-            public Path getPath() {return temporary_directory;}
-            public void onCreate(WatchEvent<?> event) {
-                try {
-                    guardian.cancel();
-                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-            }
-            public void onDelete(WatchEvent<?> event) {}
-            public void onModify(WatchEvent<?> event) {}
-        });
-        guardian.registerTache(cancelling, true);
-        guardian.registerTache(expected, true);
+        guardian.registerTache(testedTache, true);
+        guardian.registerTache(expectedTache, true);
 
-        Thread creatorThread = new Thread(
-                new Runnable() {
-                    public void run() {
-                        while(true) {
-                            try {
-                                createFile(get(temporary_directory.toString(), "src", "main", "hopeyouarewatchingforbothofus"));
-                            } catch (IOException e) {}
-                        }
-                    }
+        newSingleThreadExecutor().submit(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        createFile(get(temporary_directory.toString(), "src", "main", "hopeyouarewatchingforbothofus"));
+                    } catch (IOException e) {}
                 }
-        );
-        creatorThread.start();
+            }
+        });
 
         guardian.watch();
 
-        verify(cancelling).onCreate(any(WatchEvent.class));
-        verify(expected).onCreate(any(WatchEvent.class));
+        verify(testedTache).onCreate(any(WatchEvent.class));
+        verify(expectedTache).onCreate(any(WatchEvent.class));
         verify(guardian, atLeastOnce()).cancel();
     }
 
     @Test(timeOut = 2000)
     public void a_guardian_must_not_stop_if_a_sub_directory_is_deleted() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
+        Tache testedTache = spy(newDeleteTache(guardian, temporary_directory));
+
         createDirectories(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
 
-        Tache cancelling = spy(new Tache() {
-            public Path getPath() {return temporary_directory;}
-            public void onCreate(WatchEvent<?> event) {}
-            public void onDelete(WatchEvent<?> event) {
-                try {
-                    guardian.cancel();
-                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
-            }
-            public void onModify(WatchEvent<?> event) {}
-        });
-        guardian.registerTache(cancelling, true);
+        guardian.registerTache(testedTache, true);
 
-        Thread creatorThread = new Thread(
-                new Runnable() {
-                    public void run() {
-                        while(true) {
-                            try {
-                                delete(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
-                            } catch (IOException e) {}
-                        }
-                    }
+        newSingleThreadExecutor().submit(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        delete(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
+                    } catch (IOException e) {}
                 }
-        );
-        creatorThread.start();
+            }
+        });
 
         guardian.watch();
 
-        verify(cancelling).onDelete(any(WatchEvent.class));
+        verify(testedTache).onDelete(any(WatchEvent.class));
         verify(guardian).cancel();
     }
 
@@ -403,5 +319,31 @@ public class GuardianTest {
         WatchEvent<?> decoratedEvent = guardian.decoratedEvent(event, testStore.retrieveWatchKeys().iterator().next());
 
         assertEquals(expectedContext, decoratedEvent.context());
+    }
+
+    private Tache newCreateTache(final Guardian guardian, final Path path) {
+        return new Tache() {
+            public Path getPath() {return path;}
+            public void onCreate(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        };
+    }
+
+    private Tache newDeleteTache(final Guardian guardian, final Path path) {
+        return new Tache() {
+            public Path getPath() {return path;}
+            public void onCreate(WatchEvent<?> event) {}
+            public void onDelete(WatchEvent<?> event) {
+                try {
+                    guardian.cancel();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onModify(WatchEvent<?> event) {}
+        };
     }
 }
