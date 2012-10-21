@@ -11,10 +11,9 @@ import java.nio.file.WatchEvent;
 import java.security.InvalidParameterException;
 import java.util.concurrent.Future;
 
-import static com.github.athieriot.jtaches.utils.TestUtils.*;
-import static java.nio.file.Files.createDirectories;
-import static java.nio.file.Files.createFile;
-import static java.nio.file.Files.delete;
+import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
+import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
+import static java.nio.file.Files.*;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;

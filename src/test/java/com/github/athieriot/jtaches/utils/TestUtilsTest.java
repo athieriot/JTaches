@@ -2,13 +2,12 @@ package com.github.athieriot.jtaches.utils;
 
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 
-import static com.github.athieriot.jtaches.utils.TestUtils.*;
-import static java.nio.file.Files.*;
+import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
+import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
 import static java.nio.file.Paths.get;
 import static org.testng.Assert.*;
 

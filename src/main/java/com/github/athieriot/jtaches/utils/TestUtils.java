@@ -4,12 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
-import java.util.concurrent.Future;
 
-import static java.nio.file.Files.createFile;
-import static java.nio.file.Files.delete;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 public enum TestUtils {;
 

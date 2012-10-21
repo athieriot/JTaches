@@ -10,7 +10,7 @@ import java.security.InvalidParameterException;
 import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.CommandArgs.DEFAULT_RECURSIVE;
-import static com.github.athieriot.jtaches.utils.GuardianUtils.relativizedEvent;
+import static com.github.athieriot.jtaches.utils.GuardianUtils.*;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.walkFileTree;
 import static java.nio.file.Paths.get;
@@ -57,13 +57,6 @@ public class Guardian {
                 throw new InvalidParameterException("An error occured when register the tache " + tacheToString(tache) + ": " + getRootCauseMessage(e));
             }
         }
-    }
-    //TODO: Move these in an utility class
-    private boolean isTacheValid(Tache tache) {
-        return tache.getPath() != null;
-    }
-    private String tacheToString(Tache tache) {
-        return tache.getClass().getSimpleName() + " watching on directory: " + tache.getPath();
     }
 
     private void addTache(Tache tache, boolean recursive) throws IOException {

@@ -1,5 +1,7 @@
 package com.github.athieriot.jtaches.utils;
 
+import com.github.athieriot.jtaches.Tache;
+
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
@@ -21,6 +23,13 @@ public enum GuardianUtils {;
         }
 
         return event;
+    }
+
+    public static boolean isTacheValid(Tache tache) {
+        return tache.getPath() != null;
+    }
+    public static String tacheToString(Tache tache) {
+        return tache.getClass().getSimpleName() + " watching on directory: " + tache.getPath();
     }
 
     private static void forbiddenSet(WatchEvent<?> event, Path path, Field context) throws IllegalAccessException {
