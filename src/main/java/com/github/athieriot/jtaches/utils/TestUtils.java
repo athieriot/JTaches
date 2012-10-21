@@ -3,9 +3,13 @@ package com.github.athieriot.jtaches.utils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 
+import static java.nio.file.Files.createFile;
+import static java.nio.file.Files.delete;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 public enum TestUtils {;
 
@@ -19,6 +23,32 @@ public enum TestUtils {;
 
     public static WatchEvent<Path> newWatchEvent(final WatchEvent.Kind<Path> kind, final Path path) {
         return buildWatchEvent(kind, path);
+    }
+
+    //TODO: Tests
+    public static void launchThreadedCreation(final Path path) {
+        newSingleThreadExecutor().submit(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        createFile(path);
+                    } catch (IOException e) {}
+                }
+            }
+        });
+    }
+
+    //TODO: Tests
+    public static void launchThreadedDeletion(final Path path) {
+        newSingleThreadExecutor().submit(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        delete(path);
+                    } catch (IOException e) {}
+                }
+            }
+        });
     }
 
     private static WatchEvent<Path> buildWatchEvent(final WatchEvent.Kind<Path> kind, final Path path) {

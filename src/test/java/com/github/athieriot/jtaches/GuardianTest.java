@@ -1,5 +1,8 @@
 package com.github.athieriot.jtaches;
 
+import com.github.athieriot.jtaches.utils.TestUtils;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashCodes;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -12,8 +15,7 @@ import java.security.InvalidParameterException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
-import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
+import static com.github.athieriot.jtaches.utils.TestUtils.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
@@ -22,7 +24,6 @@ import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertEquals;
 
-//CLEANUP: These tests deserve a refactor
 public class GuardianTest {
 
     private Path temporary_directory;
@@ -76,15 +77,7 @@ public class GuardianTest {
 
         guardian.registerTache(testedTache);
 
-        newSingleThreadExecutor().submit(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        createFile(get(temporary_directory.toString(), "areyouwatchingtome"));
-                    } catch (IOException e) {}
-                }
-            }
-        });
+        launchThreadedCreation(get(temporary_directory.toString(), "areyouwatchingtome"));
 
         guardian.watch();
 
@@ -100,15 +93,7 @@ public class GuardianTest {
         createDirectories(get(temporary_directory.toString(), "src", "main"));
         guardian.registerTache(testedTache, true);
 
-        newSingleThreadExecutor().submit(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        createFile(get(temporary_directory.toString(), "src", "main", "areyouwatchingtome"));
-                    } catch (IOException e) {}
-                }
-            }
-        });
+        launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "areyouwatchingtome"));
 
         guardian.watch();
 
@@ -127,15 +112,7 @@ public class GuardianTest {
         createDirectories(get(temporary_directory.toString(), "src", "main"));
         guardian.registerTache(testedTache, false);
 
-        newSingleThreadExecutor().submit(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        createFile(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtome"));
-                    } catch (IOException e) {}
-                }
-            }
-        });
+        launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtome"));
 
         guardian.watch(1700L);
 
@@ -155,15 +132,7 @@ public class GuardianTest {
         guardian.registerTache(testedTache, true);
         guardian.registerTache(notExpectedTache, true);
 
-        newSingleThreadExecutor().submit(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        createFile(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtomybuddy"));
-                    } catch (IOException e) {}
-                }
-            }
-        });
+        launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtomybuddy"));
 
         guardian.watch(1700L);
 
@@ -183,15 +152,7 @@ public class GuardianTest {
         guardian.registerTache(testedTache, true);
         guardian.registerTache(expectedTache, true);
 
-        newSingleThreadExecutor().submit(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        createFile(get(temporary_directory.toString(), "src", "main", "hopeyouarewatchingforbothofus"));
-                    } catch (IOException e) {}
-                }
-            }
-        });
+        launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "hopeyouarewatchingforbothofus"));
 
         guardian.watch();
 
@@ -209,15 +170,7 @@ public class GuardianTest {
 
         guardian.registerTache(testedTache, true);
 
-        newSingleThreadExecutor().submit(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        delete(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
-                    } catch (IOException e) {}
-                }
-            }
-        });
+        launchThreadedDeletion(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
 
         guardian.watch();
 
