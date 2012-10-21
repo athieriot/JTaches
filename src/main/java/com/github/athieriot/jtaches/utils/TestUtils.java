@@ -3,8 +3,8 @@ package com.github.athieriot.jtaches.utils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
+import java.util.concurrent.Future;
 
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Files.delete;
@@ -25,9 +25,8 @@ public enum TestUtils {;
         return buildWatchEvent(kind, path);
     }
 
-    //TODO: Tests
-    public static void launchThreadedCreation(final Path path) {
-        newSingleThreadExecutor().submit(new Runnable() {
+    public static Future launchThreadedCreation(final Path path) {
+        return newSingleThreadExecutor().submit(new Runnable() {
             public void run() {
                 while (true) {
                     try {
@@ -38,9 +37,8 @@ public enum TestUtils {;
         });
     }
 
-    //TODO: Tests
-    public static void launchThreadedDeletion(final Path path) {
-        newSingleThreadExecutor().submit(new Runnable() {
+    public static Future launchThreadedDeletion(final Path path) {
+        return newSingleThreadExecutor().submit(new Runnable() {
             public void run() {
                 while (true) {
                     try {

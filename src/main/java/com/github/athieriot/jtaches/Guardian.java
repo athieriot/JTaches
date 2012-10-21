@@ -23,7 +23,6 @@ public class Guardian {
 
     private CommandArgs commandArgs;
 
-    //TODO: Too much stateful for my tastes
     private WatchingStore<Tache, Path> globalStorage = new WatchingStore<>();
 
     public Guardian() throws IOException {

@@ -1,8 +1,5 @@
 package com.github.athieriot.jtaches;
 
-import com.github.athieriot.jtaches.utils.TestUtils;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashCodes;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -12,14 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.security.InvalidParameterException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.*;
-import static java.nio.file.Files.*;
+import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertEquals;
