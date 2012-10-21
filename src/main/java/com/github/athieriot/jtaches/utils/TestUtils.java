@@ -25,30 +25,6 @@ public enum TestUtils {;
         return buildWatchEvent(kind, path);
     }
 
-    public static Future launchThreadedCreation(final Path path) {
-        return newSingleThreadExecutor().submit(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        createFile(path);
-                    } catch (IOException e) {}
-                }
-            }
-        });
-    }
-
-    public static Future launchThreadedDeletion(final Path path) {
-        return newSingleThreadExecutor().submit(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        delete(path);
-                    } catch (IOException e) {}
-                }
-            }
-        });
-    }
-
     private static WatchEvent<Path> buildWatchEvent(final WatchEvent.Kind<Path> kind, final Path path) {
         return new WatchEvent<Path>() {
             private final Path context = path;
