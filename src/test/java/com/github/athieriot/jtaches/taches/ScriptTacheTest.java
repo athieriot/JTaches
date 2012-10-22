@@ -35,19 +35,19 @@ public class ScriptTacheTest {
 
     @Test
     public void script_tache_should_replace_things_from_script_line() throws IOException {
-        map.put(CONFIGURATION_SCRIPT, "echo <path> <file> <event>");
+        map.put(CONFIGURATION_SCRIPT, "echo <path> <filename> <shortname> <ext> <event>");
 
-        File file = new File("/tmp/test");
+        File file = new File("/tmp/test.txt");
         file.createNewFile();
 
         String resultScript = new ScriptTache(map).manufacturingScript(file, "EVENT_CREATE");
 
-        assertEquals("echo /tmp test EVENT_CREATE", resultScript);
+        assertEquals("echo /tmp test.txt test txt EVENT_CREATE", resultScript);
     }
 
     @Test
     public void script_tache_must_execute_a_script() throws IOException, InterruptedException {
-        map.put(CONFIGURATION_SCRIPT, "mv <path>/<file> <path>/<event>");
+        map.put(CONFIGURATION_SCRIPT, "mv <path>/<filename> <path>/<event>");
         map.put(CONFIGURATION_WORKING_DIRECTORY, ".");
         File file = new File(path.toString() + "/test");
         file.createNewFile();

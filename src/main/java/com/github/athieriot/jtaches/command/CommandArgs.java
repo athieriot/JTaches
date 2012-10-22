@@ -8,6 +8,10 @@ public class CommandArgs {
 
     @Parameter(names = {"-v", "--verbose"}, description = "Verbose mode")
     private boolean verbose = false;
+
+    @Parameter(names = {"-e", "--exclude"}, description = "Exclude a pattern from watching")
+    private String excludePattern = "";
+
     @Parameter(names = {"--noRecursive"}, description = "Disable recursive watching")
     private boolean noRecursive = !DEFAULT_RECURSIVE;
 

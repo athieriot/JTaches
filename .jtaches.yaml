@@ -10,6 +10,6 @@
 
 - !!com.github.athieriot.jtaches.taches.ScriptTache [{
     path: "./src",
-    script: "notify-send <path>/<file>?<event>",
+    script: "notify-send <path>/<filename>(<shortname>.<ext>)?<event>",
     workingDirectory: "."
 }]

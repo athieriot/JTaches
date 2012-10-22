@@ -9,6 +9,8 @@ import java.util.Map;
 
 import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.Configuration.CONFIGURATION_PATH;
+import static com.google.common.io.Files.getFileExtension;
+import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 public class ScriptTache extends ConfiguredTache {
 
@@ -16,7 +18,9 @@ public class ScriptTache extends ConfiguredTache {
     public static final String CONFIGURATION_WORKING_DIRECTORY = "workingDirectory";
 
     //CLEANUP: Enumeration of patterns
-    private static final String FILE_REPLACEMENT = "<file>";
+    private static final String FULL_NAME_REPLACEMENT = "<filename>";
+    private static final String NAME_REPLACEMENT = "<shortname>";
+    private static final String EXT_REPLACEMENT = "<ext>";
     private static final String PATH_REPLACEMENT = "<path>";
     private static final String EVENT_REPLACEMENT = "<event>";
 
@@ -60,7 +64,9 @@ public class ScriptTache extends ConfiguredTache {
 
     String manufacturingScript(File file, String event) {
         String script = "";
-        script = getConfiguration().get(CONFIGURATION_SCRIPT).replaceAll(FILE_REPLACEMENT, file.getName());
+        script = getConfiguration().get(CONFIGURATION_SCRIPT).replaceAll(FULL_NAME_REPLACEMENT, file.getName());
+        script = script.replaceAll(NAME_REPLACEMENT, removeExtension(file.getName()));
+        script = script.replaceAll(EXT_REPLACEMENT, getFileExtension(file.getName()));
         script = script.replaceAll(PATH_REPLACEMENT, file.getParent());
         script = script.replaceAll(EVENT_REPLACEMENT, event);
 
