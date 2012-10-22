@@ -98,8 +98,9 @@ public class WatchingStore<I, M> {
     public void removeRelatedItems(WatchKey watchKey) {
         for(Object object : items.keySet().toArray()) {
             I item = (I) object;
-            if(isWatchedByItem(item, watchKey))
+            if(isWatchedByItem(item, watchKey)) {
                 items.removeAll(item);
+            }
         }
         removeWatchKey(watchKey);
     }
