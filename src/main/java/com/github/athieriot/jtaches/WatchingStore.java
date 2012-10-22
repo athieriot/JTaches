@@ -3,10 +3,8 @@ package com.github.athieriot.jtaches;
 import com.google.common.collect.Multimap;
 
 import java.nio.file.WatchKey;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.collect.ArrayListMultimap.create;
 import static com.google.common.collect.Maps.newConcurrentMap;
