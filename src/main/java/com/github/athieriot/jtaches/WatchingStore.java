@@ -44,6 +44,16 @@ public class WatchingStore<I, M> {
         return items.keySet();
     }
 
+    public I retrieveItem(WatchKey watchKey) {
+        for(I item : items.keySet()) {
+            if(isWatchedByItem(item, watchKey)) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
     /*
      * Retrieve all watch keys
      * Mostly for tests

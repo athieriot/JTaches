@@ -46,6 +46,12 @@ public class WatchingStoreTest {
     }
 
     @Test
+    public void testRetrieveItem() {
+        assertNull(testStore.retrieveItem(watchKey4));
+        assertEquals(TEST_ITEM, testStore.retrieveItem(watchKey));
+    }
+
+    @Test
     public void testRetrieveWatchKeys() throws Exception {
         assertEquals(3, testStore.retrieveWatchKeys().size());
         assertTrue(testStore.retrieveWatchKeys().contains(watchKey));

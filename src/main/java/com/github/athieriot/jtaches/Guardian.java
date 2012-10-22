@@ -196,7 +196,7 @@ public class Guardian {
         localKey.cancel();
     }
     private void cancelRootPath(WatchKey localKey) throws IOException {
-        info("Release this Tache from the Guardian.");
+        info("Release this Tache from the Guardian: " + tacheToString(getGlobalStorage().retrieveItem(localKey)));
         getGlobalStorage().removeRelatedItems(localKey);
 
         localKey.cancel();
