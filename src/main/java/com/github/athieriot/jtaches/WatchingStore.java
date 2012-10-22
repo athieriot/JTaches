@@ -3,8 +3,10 @@ package com.github.athieriot.jtaches;
 import com.google.common.collect.Multimap;
 
 import java.nio.file.WatchKey;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.collect.ArrayListMultimap.create;
 import static com.google.common.collect.Maps.newConcurrentMap;
@@ -88,11 +90,20 @@ public class WatchingStore<I, M> {
         return items.isEmpty();
     }
 
-    //TODO: Test
     public void removeWatchKey(WatchKey watchKey) {
-        //FIXME: Remove from items as well
+        for(I item : items. keySet()) {
+            items.remove((I) item, watchKey);
+        }
         metadatas.remove(watchKey);
-        watchKey.cancel();
+    }
+
+    public void removeRelatedItems(WatchKey watchKey) {
+        for(Object object : items.keySet().toArray()) {
+            I item = (I) object;
+            if(isWatchedByItem(item, watchKey))
+                items.removeAll(item);
+        }
+        removeWatchKey(watchKey);
     }
 
     private final class AdditionalMetadata<M> {

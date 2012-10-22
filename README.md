@@ -118,4 +118,4 @@ So, if you respect the interface and the SnakeYaml documentation, you can overri
 Known issues
 ------------
 
-+ If a watch directory is deleted, the entire watcher service fall: [https://github.com/athieriot/JTaches/issues/16](https://github.com/athieriot/JTaches/issues/16)
+[https://github.com/athieriot/JTaches/issues?milestone=2&state=open](https://github.com/athieriot/JTaches/issues?milestone=2&state=open)

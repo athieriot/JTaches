@@ -79,7 +79,7 @@ public class GuardianTest {
         guardian.watch();
 
         verify(testedTache).onCreate(any(WatchEvent.class));
-        verify(guardian, atLeastOnce()).cancel();
+        verify(guardian, atLeastOnce()).close();
     }
 
     @Test(timeOut = 2000)
@@ -96,7 +96,7 @@ public class GuardianTest {
 
         ArgumentCaptor<WatchEvent> argument = ArgumentCaptor.forClass(WatchEvent.class);
         verify(testedTache).onCreate(argument.capture());
-        verify(guardian, atLeastOnce()).cancel();
+        verify(guardian, atLeastOnce()).close();
 
         assertEquals(get("src/main/areyouwatchingtome"), argument.getValue().context());
     }
@@ -114,7 +114,7 @@ public class GuardianTest {
         guardian.watch(1700L);
 
         verify(testedTache, never()).onCreate(any(WatchEvent.class));
-        verify(guardian, never()).cancel();
+        verify(guardian, never()).close();
     }
 
     @Test(timeOut = 2000)
@@ -135,7 +135,7 @@ public class GuardianTest {
 
         verify(testedTache).onCreate(any(WatchEvent.class));
         verify(notExpectedTache, never()).onCreate(any(WatchEvent.class));
-        verify(guardian, atLeastOnce()).cancel();
+        verify(guardian, atLeastOnce()).close();
     }
 
     @Test(timeOut = 2000)
@@ -155,14 +155,23 @@ public class GuardianTest {
 
         verify(testedTache).onCreate(any(WatchEvent.class));
         verify(expectedTache).onCreate(any(WatchEvent.class));
-        verify(guardian, atLeastOnce()).cancel();
+        verify(guardian, atLeastOnce()).close();
     }
 
     @Test(timeOut = 2000)
     public void a_guardian_must_not_stop_if_a_sub_directory_is_deleted() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
-        Tache testedTache = spy(newDeleteTache(guardian, temporary_directory));
 
+        Tache testedTache = spy(new Tache() {
+            public Path getPath() {return temporary_directory;}
+            public void onCreate(WatchEvent<?> event) {}
+            public void onDelete(WatchEvent<?> event) {
+                try {
+                    guardian.close();
+                } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
+            }
+            public void onModify(WatchEvent<?> event) {}
+        });
         createDirectories(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
 
         guardian.registerTache(testedTache, true);
@@ -172,7 +181,30 @@ public class GuardianTest {
         guardian.watch();
 
         verify(testedTache).onDelete(any(WatchEvent.class));
-        verify(guardian).cancel();
+        //Not quit clear really. Related to the "blocking" nature of the guardian.
+        verify(guardian).close();
+    }
+
+    @Test(timeOut = 2000)
+    public void a_guardian_must_stop_if_a_root_directory_is_deleted() throws IOException, InterruptedException {
+        final Guardian guardian = spy(Guardian.create());
+
+        createDirectories(get(temporary_directory.toString(), "src", "backtotheprimitives"));
+        Tache testedTache = spy(new Tache() {
+            public Path getPath() {return get(temporary_directory.toString(), "src", "backtotheprimitives");}
+            public void onCreate(WatchEvent<?> event) {}
+            public void onDelete(WatchEvent<?> event) {}
+            public void onModify(WatchEvent<?> event) {}
+        });
+
+        guardian.registerTache(testedTache, false);
+
+        launchThreadedDeletion(get(temporary_directory.toString(), "src", "backtotheprimitives"));
+
+        guardian.watch();
+
+        verify(testedTache, never()).onDelete(any(WatchEvent.class));
+        verify(guardian).close();
     }
 
     @Test
@@ -276,7 +308,7 @@ public class GuardianTest {
             public Path getPath() {return path;}
             public void onCreate(WatchEvent<?> event) {
                 try {
-                    guardian.cancel();
+                    guardian.close();
                 } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
             }
             public void onDelete(WatchEvent<?> event) {}
@@ -290,7 +322,7 @@ public class GuardianTest {
             public void onCreate(WatchEvent<?> event) {}
             public void onDelete(WatchEvent<?> event) {
                 try {
-                    guardian.cancel();
+                    guardian.close();
                 } catch (IOException e) {System.out.println("Cancelling guardian impossible"); e.printStackTrace();}
             }
             public void onModify(WatchEvent<?> event) {}

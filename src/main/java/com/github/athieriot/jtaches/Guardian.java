@@ -127,7 +127,7 @@ public class Guardian {
                 dispatchFilteredByTache(decoratedEvent(event, localKey), localKey);
             }
 
-            if (!localKey.reset()) {
+            if(!localKey.reset()) {
                 onCancel(localKey);
             }
         }
@@ -182,18 +182,33 @@ public class Guardian {
         info("Overflow detected. You may have lost one or more event calls.");
     }
 
-    public void cancel() throws IOException {
-        info("Watcher is no longer valid. Closing.");
-        watchService.close();
-    }
     private void onCancel(WatchKey localKey) throws IOException {
-        //FIXME: Remove task from the store until the last one
         if(getGlobalStorage().hasFlag(localKey)) {
-            cancel();
+            cancelRootPath(localKey);
+        } else {
+            cancelSubPath(localKey);
         }
-
+    }
+    private void cancelSubPath(WatchKey localKey) {
         info("Release this watchkey from the Guardian.");
         getGlobalStorage().removeWatchKey(localKey);
+
+        localKey.cancel();
+    }
+    private void cancelRootPath(WatchKey localKey) throws IOException {
+        info("Release this Tache from the Guardian.");
+        getGlobalStorage().removeRelatedItems(localKey);
+
+        localKey.cancel();
+
+        if(getGlobalStorage().isEmpty()) {
+            info("No valid Tache left. Closing");
+            close();
+        }
+    }
+    public void close() throws IOException {
+        info("Watcher is no longer valid. Closing.");
+        watchService.close();
     }
 
     WatchingStore<Tache, Path> getGlobalStorage() {

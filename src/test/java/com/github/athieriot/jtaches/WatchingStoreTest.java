@@ -86,4 +86,28 @@ public class WatchingStoreTest {
         assertFalse(testStore.hasFlag(watchKey));
         assertTrue(testStore.hasFlag(watchKey2));
     }
+
+    @Test
+    public void testRemoveWatchKey() {
+        WatchingStore<String, String> testDeleteStore = new WatchingStore<>();
+        testDeleteStore.store(TEST_ITEM, watchKey, TEST_META);
+
+        testDeleteStore.removeWatchKey(watchKey);
+
+        assertFalse(testDeleteStore.isWatched(watchKey));
+        assertFalse(testDeleteStore.isWatchedByItem(TEST_ITEM, watchKey));
+        assertNull(testDeleteStore.retreiveMetadata(watchKey));
+    }
+
+    @Test
+    public void testRemoveRelatedItem() {
+        WatchingStore<String, String> testDeleteStore = new WatchingStore<>();
+        testDeleteStore.store(TEST_ITEM, watchKey, TEST_META);
+
+        testDeleteStore.removeRelatedItems(watchKey);
+
+        assertTrue(testDeleteStore.isEmpty());
+        assertFalse(testDeleteStore.isWatchedByItem(TEST_ITEM, watchKey));
+        assertNull(testDeleteStore.retreiveMetadata(watchKey));
+    }
 }
