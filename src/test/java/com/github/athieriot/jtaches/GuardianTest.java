@@ -101,7 +101,7 @@ public class GuardianTest {
         assertEquals(get("src/main/areyouwatchingtome"), argument.getValue().context());
     }
 
-    @Test(timeOut = 2000)
+    @Test(timeOut = 2500)
     public void a_guardian_must_not_watch_sub_file_creation_if_no_recursive() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
@@ -111,7 +111,7 @@ public class GuardianTest {
 
         launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtome"));
 
-        guardian.watch(1700L);
+        guardian.watch(1500L);
 
         verify(testedTache, never()).onCreate(any(WatchEvent.class));
         verify(guardian, never()).close();
