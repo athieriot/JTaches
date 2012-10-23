@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.InvalidParameterException;
-import java.util.concurrent.TimeUnit;
 
 import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.info;

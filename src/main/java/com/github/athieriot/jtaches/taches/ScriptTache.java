@@ -13,6 +13,7 @@ import static com.esotericsoftware.minlog.Log.info;
 import static com.github.athieriot.jtaches.command.Configuration.CONFIGURATION_PATH;
 import static com.google.common.io.Files.getFileExtension;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class ScriptTache extends ConfiguredTache {
 
@@ -70,11 +71,13 @@ public class ScriptTache extends ConfiguredTache {
     }
 
     private void displayOutPut(Process process) throws IOException {
-        BufferedReader commandLineBuffer = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        try(BufferedReader commandLineBuffer =
+                    new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 
-        String line = "";
-        while ((line = commandLineBuffer.readLine()) != null) {
-            System.out.println(line);
+            String line = EMPTY;
+            while ((line = commandLineBuffer.readLine()) != null) {
+                System.out.println(line);
+            }
         }
     }
 
