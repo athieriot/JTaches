@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.emptyList;
 import static org.testng.Assert.*;
 
 public class ConfiguredTacheTest {
@@ -89,6 +90,27 @@ public class ConfiguredTacheTest {
         expectedConfiguration.put("addonValidator", "");
 
         DummyConfiguredTache configuredTache = new DummyConfiguredTache(expectedConfiguration);
+    }
+
+    @Test
+    public void a_configured_tache_must_take_excludes_parameter_empty() {
+        Map<String, String> expectedConfiguration = newHashMap();
+        expectedConfiguration.put("path", ".");
+        DummyConfiguredTache configuredTache = new DummyConfiguredTache(expectedConfiguration);
+
+        assertEquals(emptyList(), configuredTache.getExcludes());
+    }
+
+    @Test
+    public void a_configured_tache_must_take_excludes_parameter() {
+        String testedPattern = ".*test";
+
+        Map<String, String> expectedConfiguration = newHashMap();
+        expectedConfiguration.put("path", ".");
+        expectedConfiguration.put("excludes", testedPattern);
+        DummyConfiguredTache configuredTache = new DummyConfiguredTache(expectedConfiguration);
+
+        assertEquals(newArrayList(testedPattern), configuredTache.getExcludes());
     }
 
     private class DummyConfiguredTache extends ConfiguredTache {

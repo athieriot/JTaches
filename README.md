@@ -73,16 +73,21 @@ For now, you have access to three Taches:
 
 + **com.github.athieriot.jtaches.taches.SysoutTache** : Display envent details in the console.
     - "path", the directory to watch
+    - "excludes", list of exclusion patterns separated by a ';' (optional)
 
 + **com.github.athieriot.jtaches.taches.CopyTache** : Copy watched files to another location.
     - "path", the directory to watch
     - "copyTo", where to copy the files
     - "makePath", indicate to create or not the copy path if not exists (optional, default true)
+    - "excludes", list of exclusion patterns separated by a ';' (optional)
 
 + **com.github.athieriot.jtaches.taches.ScriptTache** : Display envent details in the console.
     - "path", the directory to watch
     - "script", the script to execute (Patterns ```<path>```, ```<filename>```, ```<shortname>```, ```<ext>``` and ```<event>``` while be replaced by real values)
     - "workingDirectory", the working dir where to execute the script (optional)
+    - "excludes", list of exclusion patterns separated by a ';' (optional)
+
+Patterns for exclusion needs to match the Java regular expression representation: [http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html](http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html)
 
 Hack
 ----

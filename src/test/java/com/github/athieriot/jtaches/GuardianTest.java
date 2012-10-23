@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.security.InvalidParameterException;
+import java.util.Collection;
 import java.util.concurrent.Future;
 
 import static com.github.athieriot.jtaches.utils.TestUtils.newOverFlowEvent;
@@ -16,6 +17,7 @@ import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
+import static java.util.Collections.emptyList;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;
@@ -164,6 +166,7 @@ public class GuardianTest {
 
         Tache testedTache = spy(new Tache() {
             public Path getPath() {return temporary_directory;}
+            public Collection<String> getExcludes() {return emptyList();}
             public void onCreate(WatchEvent<?> event) {}
             public void onDelete(WatchEvent<?> event) {
                 try {
@@ -191,6 +194,7 @@ public class GuardianTest {
 
         createDirectories(get(temporary_directory.toString(), "src", "backtotheprimitives"));
         Tache testedTache = spy(new Tache() {
+            public Collection<String> getExcludes() {return emptyList();}
             public Path getPath() {return get(temporary_directory.toString(), "src", "backtotheprimitives");}
             public void onCreate(WatchEvent<?> event) {}
             public void onDelete(WatchEvent<?> event) {}
@@ -306,6 +310,7 @@ public class GuardianTest {
     private Tache newCreateTache(final Guardian guardian, final Path path) {
         return new Tache() {
             public Path getPath() {return path;}
+            public Collection<String> getExcludes() {return emptyList();}
             public void onCreate(WatchEvent<?> event) {
                 try {
                     guardian.close();
@@ -319,6 +324,7 @@ public class GuardianTest {
     private Tache newDeleteTache(final Guardian guardian, final Path path) {
         return new Tache() {
             public Path getPath() {return path;}
+            public Collection<String> getExcludes() {return emptyList();}
             public void onCreate(WatchEvent<?> event) {}
             public void onDelete(WatchEvent<?> event) {
                 try {

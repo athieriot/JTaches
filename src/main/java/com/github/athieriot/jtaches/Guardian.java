@@ -139,7 +139,10 @@ public class Guardian {
     }
     void dispatchFilteredByTache(WatchEvent<?> event, WatchKey localKey) throws IOException {
         for(Tache tache : getGlobalStorage().retrieveItems()) {
-            if(localKey == null || getGlobalStorage().isWatchedByItem(tache, localKey)) {
+            //TODO: Doing better than localKey to null for test purpose
+            if((localKey == null
+                    || getGlobalStorage().isWatchedByItem(tache, localKey))
+                    && included(tache, (Path) event.context())) {
                 registerNewDirectory(event, tache);
                 fire(event, tache);
             }

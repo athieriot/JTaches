@@ -9,6 +9,7 @@ import java.nio.file.WatchEvent;
 
 import static com.github.athieriot.jtaches.utils.GuardianUtils.*;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static org.testng.Assert.assertFalse;
@@ -48,5 +49,20 @@ public class GuardianUtilsTest {
 
         assertTrue(tacheToString(testedTache).contains("test"));
         assertTrue(tacheToString(testedTache).contains("DummyTache"));
+    }
+
+    @Test
+    public void path_included_by_default() {
+        Tache defaultTache = new DummyTache();
+
+        assertTrue(included(defaultTache, get("ok")));
+    }
+
+    @Test
+    public void path_excluded_if_asked() {
+        DummyTache defaultTache = new DummyTache();
+        defaultTache.setExcludes(newArrayList(".*yaml"));
+
+        assertFalse(included(defaultTache, get("jtaches.yaml")));
     }
 }

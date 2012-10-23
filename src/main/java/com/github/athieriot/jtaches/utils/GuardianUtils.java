@@ -48,4 +48,13 @@ public enum GuardianUtils {;
             }
         );
     }
+
+    public static boolean included(Tache tache, Path path) {
+        boolean included = true;
+
+        for(String excludeRegexp : tache.getExcludes()) {
+            included = !path.toString().matches(excludeRegexp);
+        }
+        return included;
+    }
 }
