@@ -2,8 +2,10 @@ package com.github.athieriot.jtaches.taches;
 
 import com.github.athieriot.jtaches.taches.internal.ConfiguredTache;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.WatchEvent;
 import java.util.Map;
 
@@ -56,9 +58,23 @@ public class ScriptTache extends ConfiguredTache {
 
         info("Executing script: " + script);
         try {
-            processBuilder.start();
+            Process process = processBuilder.start();
+            process.waitFor();
+
+            displayOutPut(process);
         } catch (IOException e) {
             info("Error executing the command: " + script + " - " + e.getMessage(), e);
+        } catch (InterruptedException e) {
+            info("Command interrupted during execution: " + script + " - " + e.getMessage(), e);
+        }
+    }
+
+    private void displayOutPut(Process process) throws IOException {
+        BufferedReader commandLineBuffer = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+        String line = "";
+        while ((line = commandLineBuffer.readLine()) != null) {
+            System.out.println(line);
         }
     }
 
