@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.InvalidParameterException;
+import java.util.concurrent.TimeUnit;
 
 import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.info;
@@ -15,6 +16,7 @@ import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.walkFileTree;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 public class Guardian {
@@ -109,7 +111,7 @@ public class Guardian {
 
         while (timeout == null || !isTimeoutOverRun(start, timeout)) {
             try {
-                localKey = watchService.poll();
+                localKey = watchService.poll(1, SECONDS);
             } catch(ClosedWatchServiceException cse) {
                 break;
             }
