@@ -58,7 +58,7 @@ The configuration need to be in Yaml format and the content look like this:
 
         - !!com.github.athieriot.jtaches.taches.ScriptTache [{
             path: ".",
-            script: "notify-send <path>/<file>/<event>",
+            script: "notify-send <path>/<filename>/<event>",
         }]
 
 A list of Taches classes (in classpath) containing a list of properties.
