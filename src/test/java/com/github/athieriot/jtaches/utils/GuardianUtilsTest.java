@@ -65,4 +65,12 @@ public class GuardianUtilsTest {
 
         assertFalse(included(defaultTache, get("jtaches.yaml")));
     }
+
+    @Test
+    public void path_excluded_if_deliniter_escaped() {
+        DummyTache defaultTache = new DummyTache();
+        defaultTache.setExcludes(newArrayList("but\\;not"));
+
+        assertFalse(included(defaultTache, get("but;not")));
+    }
 }

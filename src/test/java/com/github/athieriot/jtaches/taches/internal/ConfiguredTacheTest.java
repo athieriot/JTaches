@@ -113,6 +113,18 @@ public class ConfiguredTacheTest {
         assertEquals(newArrayList(testedPattern), configuredTache.getExcludes());
     }
 
+    @Test
+    public void a_configured_tache_must_take_excludes_parameter_with_escape_delimiter() {
+        String testedPattern = ".*test;again;but\\;not";
+
+        Map<String, String> expectedConfiguration = newHashMap();
+        expectedConfiguration.put("path", ".");
+        expectedConfiguration.put("excludes", testedPattern);
+        DummyConfiguredTache configuredTache = new DummyConfiguredTache(expectedConfiguration);
+
+        assertEquals(newArrayList(".*test", "again", "but\\;not"), configuredTache.getExcludes());
+    }
+
     private class DummyConfiguredTache extends ConfiguredTache {
         protected DummyConfiguredTache(Map<String, String> configuration) {
             super(configuration);
