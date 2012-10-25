@@ -62,7 +62,6 @@ public abstract class ConfiguredTache implements Tache {
     }
 
     @Override
-    //TODO: Validate patterns at boot time with nice error
     public Collection<String> getExcludes() {
         String excludesConfiguration = configuration.get(CONFIGURATION_EXCLUDES);
         return excludesConfiguration == null ? Collections.<String>emptyList() : newArrayList(excludesConfiguration.split(Configuration.DELIMITER));

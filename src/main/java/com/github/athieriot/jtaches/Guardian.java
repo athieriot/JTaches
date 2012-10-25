@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.InvalidParameterException;
+import java.util.regex.PatternSyntaxException;
 
 import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.info;
@@ -39,7 +40,6 @@ public class Guardian {
     }
 
     public void registerTache(Tache tache) throws IOException {
-        //TODO: Filter .files
         if(commandArgs == null) {
             registerTache(tache, DEFAULT_RECURSIVE);
         } else {
@@ -48,14 +48,16 @@ public class Guardian {
     }
     public void registerTache(Tache tache, boolean recursive) {
         if(tache != null) {
-            if(!isTacheValid(tache)) {
-                throw new InvalidParameterException("Tache not valid: " + tacheToString(tache));
-            }
-
             try {
+                if(!isTacheValid(tache)) {
+                    throw new InvalidParameterException("Tache not valid: " + tacheToString(tache));
+                }
+
                 addTache(tache, recursive);
+            } catch (PatternSyntaxException pse) {
+                throw new InvalidParameterException("Tache not valid: " + tacheToString(tache) + "\n" + pse.getMessage());
             } catch (IOException e) {
-                throw new InvalidParameterException("An error occured when register the tache " + tacheToString(tache) + ": " + getRootCauseMessage(e));
+                throw new InvalidParameterException("An error occured when register the tache " + tacheToString(tache) + "\r" + getRootCauseMessage(e));
             }
         }
     }

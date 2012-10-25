@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
+import java.util.regex.PatternSyntaxException;
 
 import static com.github.athieriot.jtaches.utils.GuardianUtils.*;
 import static com.github.athieriot.jtaches.utils.TestUtils.newWatchEvent;
@@ -41,6 +42,14 @@ public class GuardianUtilsTest {
         Tache inValidTache = new DummyTache();
 
         assertFalse(isTacheValid(inValidTache));
+    }
+
+    @Test(expectedExceptions = PatternSyntaxException.class)
+    public void tell_if_a_tache_has_a_bad_pattern() {
+        DummyTache badPatternTache = new DummyTache(get("test"));
+        badPatternTache.setExcludes(newArrayList("*kdsjf"));
+
+        isTacheValid(badPatternTache);
     }
 
     @Test

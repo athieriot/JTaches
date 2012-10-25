@@ -26,6 +26,9 @@ public enum GuardianUtils {;
     }
 
     public static boolean isTacheValid(Tache tache) {
+        //Try every patterns to fail fast if one is not valid
+        included(tache, get(""));
+
         return tache.getPath() != null;
     }
     public static String tacheToString(Tache tache) {
