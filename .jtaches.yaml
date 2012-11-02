@@ -13,3 +13,17 @@
     script: "notify-send <path>/<filename>(<shortname>.<ext>)?<event>",
     workingDirectory: "."
 }]
+
+- !!com.github.athieriot.jtaches.taches.RabbitmqTache [{
+    path: "./src",
+    exchangeName: "event_exchange",
+    createEventRoutingKey: "create",
+    modifyEventRoutingKey: "modify",
+    deleteEventRoutingKey: "delete",
+    absolutePath: "true",
+    #username: "",
+    #password: "",
+    #virtualHost: "",
+    #host: "",
+    #port: ""
+}]
