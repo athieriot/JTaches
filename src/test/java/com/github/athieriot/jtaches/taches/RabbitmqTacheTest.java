@@ -13,6 +13,7 @@ import static com.google.common.io.Files.createTempDir;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class RabbitmqTacheTest {
 
@@ -80,6 +81,6 @@ public class RabbitmqTacheTest {
 
         RabbitmqTache testedTache = new RabbitmqTache(map);
 
-        assertEquals("/home/aurelien/Dropbox/sources/JTaches/src/testFile", testedTache.eventToFilePath(newWatchEvent(ENTRY_MODIFY, get("testFile"))));
+        assertTrue(testedTache.eventToFilePath(newWatchEvent(ENTRY_MODIFY, get("testFile"))).matches("\\/.*\\/JTaches\\/src\\/testFile"));
     }
 }
