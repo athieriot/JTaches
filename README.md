@@ -81,7 +81,7 @@ For now, you have access to three Taches:
     - "makePath", indicate to create or not the copy path if not exists (optional, default true)
     - "excludes", list of exclusion patterns separated by a ';' (optional)
 
-+ **com.github.athieriot.jtaches.taches.ScriptTache** : Display envent details in the console.
++ **com.github.athieriot.jtaches.taches.ScriptTache** : Execute a command on file event
     - "path", the directory to watch
     - "script", the script to execute (Patterns ```<path>```, ```<filename>```, ```<shortname>```, ```<ext>``` and ```<event>``` while be replaced by real values)
     - "workingDirectory", the working dir where to execute the script (optional)
