@@ -20,10 +20,5 @@
     createEventRoutingKey: "create",
     modifyEventRoutingKey: "modify",
     deleteEventRoutingKey: "delete",
-    absolutePath: "true",
-    #username: "",
-    #password: "",
-    #virtualHost: "",
-    #host: "",
-    #port: ""
+    absolutePath: "true"
 }]
