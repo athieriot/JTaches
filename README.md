@@ -87,6 +87,20 @@ For now, you have access to three Taches:
     - "workingDirectory", the working dir where to execute the script (optional)
     - "excludes", list of exclusion patterns separated by a ';' (optional)
 
++ **com.github.athieriot.jtaches.taches.RabbitmqTache** : Sending filename as a message to a RabbitMQ exchange (using events as routing keys).
+    - "path", the directory to watch
+    - "exchangeName", name of the exchange to which send messages
+    - "createEventRoutingKey", RoutingKey for onCreate event (optional, default ENTRY_CREATE)
+    - "modifyEventRoutingKey", RoutingKey for onModify event (optional, default ENTRY_MODIFY)
+    - "deleteEventRoutingKey", RoutingKey for onDelete event (optional, default ENTRY_DELETE)
+    - "absolutePath", if true the absolute path of the modified file is send to RabbitMQ, if false it's the relative path (optional, default false)
+    - "host", host address of your RabbitMQ instance (optional) 
+    - "port", port (optional) 
+    - "username", username of your RabbitMQ instance (optional)
+    - "password", password of your RabbitMQ instance (optional)
+    - "virtualHost", virtualhost (optional)
+    - "excludes", list of exclusion patterns separated by a ';' (optional)
+
 Patterns for exclusion needs to match the Java regular expression representation: [http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html](http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html)
 
 Hack
@@ -108,6 +122,7 @@ Installation via Maven:
 Then, you have access to five things:
 
 + getPath() that you need to implement to provide the path to watch.
++ getExcludes() that you need to implement to provide a Collection of Strings to exclude from the watching
 + onCreate(), onDelete() and onModify() which are events callbacks and have to be implemented. See [WatchEvent](http://docs.oracle.com/javase/7/docs/api/java/nio/file/WatchEvent.html).
 + Log is a static logging object from which you have access to info(), debug(), etc... See [Minlog](http://code.google.com/p/minlog/). The default log level in INFO and DEBUG in verbose mode.
 
