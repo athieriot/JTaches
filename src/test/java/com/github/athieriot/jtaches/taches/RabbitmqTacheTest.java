@@ -81,6 +81,6 @@ public class RabbitmqTacheTest {
 
         RabbitmqTache testedTache = new RabbitmqTache(map);
 
-        assertTrue(testedTache.eventToFilePath(newWatchEvent(ENTRY_MODIFY, get("testFile"))).matches("\\/.*\\/JTaches\\/src\\/testFile"));
+        assertTrue(testedTache.eventToFilePath(newWatchEvent(ENTRY_MODIFY, get("testFile"))).matches("\\/.*\\/src\\/testFile"));
     }
 }
