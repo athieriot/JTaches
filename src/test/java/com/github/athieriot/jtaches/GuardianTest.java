@@ -188,7 +188,7 @@ public class GuardianTest {
         verify(guardian).close();
     }
 
-    @Test(timeOut = 2000)
+    @Test(timeOut = 3000)
     public void a_guardian_must_stop_if_a_root_directory_is_deleted() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
 
