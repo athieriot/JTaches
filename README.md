@@ -16,7 +16,7 @@ Binaries
 
 Thanks to this Protip: [http://coderwall.com/p/ssuaxa](http://coderwall.com/p/ssuaxa), you can now download a Linux executable and just use it (you still need Java):
 
-        wget http://cloud.github.com/downloads/athieriot/JTaches/jtaches-1.3.0
+        wget https://github.com/athieriot/JTaches/releases/download/1.3/jtaches-1.3.0
         chmod +x jtaches-1.3.0
         ./jtaches-1.3.0 -h
 
