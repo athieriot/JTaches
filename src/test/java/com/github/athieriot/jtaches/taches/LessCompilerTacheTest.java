@@ -63,11 +63,12 @@ public class LessCompilerTacheTest {
     public void compile_tache_must_delete_if_a_file_is_deleted() throws IOException {
         Tache tache = spy(new LessCompilerTache(map));
 
-        File to = new File(toTemp.getAbsolutePath() + "/" + "oma.less");
+        File from = new File(toTemp.getAbsolutePath() + "/" + "oma.less");
+        File to = new File(toTemp.getAbsolutePath() + "/" + "oma.css");
         to.createNewFile();
 
         tache.onDelete(newWatchEvent(StandardWatchEventKinds.ENTRY_DELETE, //
-                                     get(to.getName()))); //
+                                     get(from.getName()))); //
 
         assertFalse(to.exists());
     }
@@ -92,7 +93,7 @@ public class LessCompilerTacheTest {
         Map<String, String> cloneMap = newHashMap();
         cloneMap.putAll(map);
         Tache tache = spy(new LessCompilerTache(cloneMap));
-        cloneMap.put(CONFIGURATION_COMPILE_TO, "bullshit");
+        cloneMap.put(CONFIGURATION_COMPILE_TO, "./target/bullshit");
         cloneMap.put(CONFIGURATION_MAKE_PATH, "false");
 
         File from = new File(fromTemp.getAbsolutePath() + "/" + "oma.less");

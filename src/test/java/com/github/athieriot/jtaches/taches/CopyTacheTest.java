@@ -93,7 +93,7 @@ public class CopyTacheTest {
         Map<String, String> cloneMap = newHashMap();
         cloneMap.putAll(map);
         Tache tache = spy(new CopyTache(cloneMap));
-        cloneMap.put(CONFIGURATION_COPY_TO, "bullshit");
+        cloneMap.put(CONFIGURATION_COPY_TO, "./target/bullshit");
         cloneMap.put(CONFIGURATION_MAKE_PATH, "false");
 
         File from = new File(fromTemp.getAbsolutePath() + "/" + "oma.gad");

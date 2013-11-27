@@ -48,7 +48,7 @@ public class LessCompilerTache extends ConfiguredTache {
     @Override
     public void onDelete(WatchEvent<?> event) {
         if (isLessFile(event)) {
-            Path to = get(getConfiguration().get(CONFIGURATION_COMPILE_TO), resolveFileName(event));
+            Path to = get(getConfiguration().get(CONFIGURATION_COMPILE_TO), resolveFileName(event).replaceAll(".less", ".css"));
 
             try {
                 info("Deleting file: " + to.toString());
