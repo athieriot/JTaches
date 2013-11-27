@@ -61,6 +61,8 @@
       <exec.maven.version>1.2.1</exec.maven.version>
       <maven.assembly.version>2.3</maven.assembly.version>
       <maven.surefire.version>2.12</maven.surefire.version>
+      <coveralls-maven-plugin.version>2.0.1</coveralls-maven-plugin.version>
+      <cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
    </properties>
 
    <build>
@@ -121,6 +123,22 @@
                  <argLine>-XX:-UseSplitVerifier</argLine>
              </configuration>
          </plugin>
+          <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>cobertura-maven-plugin</artifactId>
+              <version>${cobertura-maven-plugin.version}</version>
+              <configuration>
+                  <format>xml</format>
+                  <maxmem>256m</maxmem>
+                  <!-- aggregated reports for multi-module projects -->
+                  <aggregate>true</aggregate>
+              </configuration>
+          </plugin>
+          <plugin>
+              <groupId>org.eluder.coveralls</groupId>
+              <artifactId>coveralls-maven-plugin</artifactId>
+              <version>${coveralls-maven-plugin.version}</version>
+          </plugin>
       </plugins>
    </build>
 
