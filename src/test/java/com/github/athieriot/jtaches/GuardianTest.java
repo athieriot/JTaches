@@ -69,7 +69,7 @@ public class GuardianTest {
         verify(guardian, never()).dispatch(any(WatchEvent.class));
     }
 
-    @Test(timeOut = 2000)
+    @Test(timeOut = 5000)
     public void a_guardian_must_watch_true_file_creation() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
@@ -78,13 +78,13 @@ public class GuardianTest {
 
         launchThreadedCreation(get(temporary_directory.toString(), "areyouwatchingtome"));
 
-        guardian.watch();
+        guardian.watch(3000L);
 
         verify(testedTache).onCreate(any(WatchEvent.class));
         verify(guardian, atLeastOnce()).close();
     }
 
-    @Test(timeOut = 2000)
+    @Test(timeOut = 5000)
     public void a_guardian_must_watch_true_sub_file_creation() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
@@ -94,7 +94,7 @@ public class GuardianTest {
 
         launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "areyouwatchingtome"));
 
-        guardian.watch();
+        guardian.watch(3000L);
 
         ArgumentCaptor<WatchEvent> argument = ArgumentCaptor.forClass(WatchEvent.class);
         verify(testedTache).onCreate(argument.capture());
@@ -103,7 +103,7 @@ public class GuardianTest {
         assertEquals(get("src/main/areyouwatchingtome"), argument.getValue().context());
     }
 
-    @Test(timeOut = 2500)
+    @Test(timeOut = 5000)
     public void a_guardian_must_not_watch_sub_file_creation_if_no_recursive() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
@@ -113,13 +113,13 @@ public class GuardianTest {
 
         launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtome"));
 
-        guardian.watch(1500L);
+        guardian.watch(3000L);
 
         verify(testedTache, never()).onCreate(any(WatchEvent.class));
         verify(guardian, never()).close();
     }
 
-    @Test(timeOut = 2000)
+    @Test(timeOut = 5000)
     public void a_guardian_must_not_watch_sub_file_creation_if_not_related_task() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
@@ -133,14 +133,14 @@ public class GuardianTest {
 
         launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "hopeyournotwatchingtomybuddy"));
 
-        guardian.watch(1700L);
+        guardian.watch(3000L);
 
         verify(testedTache).onCreate(any(WatchEvent.class));
         verify(notExpectedTache, never()).onCreate(any(WatchEvent.class));
         verify(guardian, atLeastOnce()).close();
     }
 
-    @Test(timeOut = 2000)
+    @Test(timeOut = 5000)
     public void a_guardian_must_watch_sub_file_creation_for_two_different_tasks() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
         Tache testedTache = spy(newCreateTache(guardian, temporary_directory));
@@ -153,14 +153,14 @@ public class GuardianTest {
 
         launchThreadedCreation(get(temporary_directory.toString(), "src", "main", "hopeyouarewatchingforbothofus"));
 
-        guardian.watch();
+        guardian.watch(3000L);
 
         verify(testedTache).onCreate(any(WatchEvent.class));
         verify(expectedTache).onCreate(any(WatchEvent.class));
         verify(guardian, atLeastOnce()).close();
     }
 
-    @Test(timeOut = 2000)
+    @Test(timeOut = 5000)
     public void a_guardian_must_not_stop_if_a_sub_directory_is_deleted() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
 
@@ -181,14 +181,14 @@ public class GuardianTest {
 
         launchThreadedDeletion(get(temporary_directory.toString(), "src", "main", "iamnotyourpupet"));
 
-        guardian.watch();
+        guardian.watch(3000L);
 
         verify(testedTache).onDelete(any(WatchEvent.class));
         //Not quit clear really. Related to the "blocking" nature of the guardian.
         verify(guardian).close();
     }
 
-    //@Test(timeOut = 3000)
+    //@Test(timeOut = 5000)
     //TODO: Failing on Travis. Need to find out why
     public void a_guardian_must_stop_if_a_root_directory_is_deleted() throws IOException, InterruptedException {
         final Guardian guardian = spy(Guardian.create());
@@ -206,7 +206,7 @@ public class GuardianTest {
 
         launchThreadedDeletion(get(temporary_directory.toString(), "src", "backtotheprimitives"));
 
-        guardian.watch();
+        guardian.watch(3000L);
 
         verify(testedTache, never()).onDelete(any(WatchEvent.class));
         verify(guardian).close();
