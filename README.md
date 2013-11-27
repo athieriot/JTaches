@@ -139,3 +139,7 @@ Known issues
 ------------
 
 [https://github.com/athieriot/JTaches/issues?milestone=2&state=open](https://github.com/athieriot/JTaches/issues?milestone=2&state=open)
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/athieriot/jtaches/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
