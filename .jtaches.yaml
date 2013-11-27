@@ -8,6 +8,12 @@
     makePath: "true"
 }]
 
+- !!com.github.athieriot.jtaches.taches.LessCompilerTache [{
+    path: "./src",
+    compileTo: "./target",
+    makePath: "true"
+}]
+
 - !!com.github.athieriot.jtaches.taches.ScriptTache [{
     path: "./src",
     script: "notify-send <path>/<filename>(<shortname>.<ext>)?<event>",
