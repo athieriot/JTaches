@@ -81,6 +81,12 @@ For now, you have access to three Taches:
     - "makePath", indicate to create or not the copy path if not exists (optional, default true)
     - "excludes", list of exclusion patterns separated by a ';' (optional)
 
++ **com.github.athieriot.jtaches.taches.LessCompilerTache** : Compile a Less file to Css in the specified location. Using: [lesscss-java](https://github.com/marceloverdijk/lesscss-java)
+    - "path", the directory to watch
+    - "compileTo", where to compile the files
+    - "makePath", indicate to create or not the copy path if not exists (optional, default true)
+    - "excludes", list of exclusion patterns separated by a ';' (optional)
+
 + **com.github.athieriot.jtaches.taches.ScriptTache** : Execute a command on file event
     - "path", the directory to watch
     - "script", the script to execute (Patterns ```<path>```, ```<filename>```, ```<shortname>```, ```<ext>``` and ```<event>``` while be replaced by real values)
@@ -110,7 +116,6 @@ If you want to build a Tache, you need to write a new class implementing the Tac
 ConfiguredTache is just an abstract class made to ease the work.
 
 Installation via Maven:
-
 
         <dependency>
                 <groupId>com.github.athieriot</groupId>
