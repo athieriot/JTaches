@@ -45,22 +45,22 @@ Usage
 And that's it.
 
 But you have to provide a configuration file first.
-By default, the program search for **.jtaches.yaml** in the current directory but you can override it from the command line.
+By default, the program looks up **.jtaches.yaml** in the current directory but you can override this default filename from the command line.
 
         ./jtaches -file whatever.yaml
 
 Configuration
 -------------
 
-The configuration need to be in Yaml format and the content look like this:
+The configuration needs to be in Yaml format and the content look like this:
 
         - !!com.github.athieriot.jtaches.taches.ScriptTache [{
             path: ".",
             script: "notify-send <path>/<filename>/<event>",
         }]
 
-A list of Taches classes (in classpath) containing a list of properties.
-The syntax is borrow to [SnakeYaml](http://code.google.com/p/snakeyaml/wiki/Documentation) as it is the parser used internally.
+That is: a list of Taches classes (in classpath) containing a list of properties.
+The syntax is borrowed from [SnakeYaml](http://code.google.com/p/snakeyaml/wiki/Documentation) as it is the parser internally used.
 
 Full example here: [https://github.com/athieriot/JTaches/blob/master/.jtaches.yaml](https://github.com/athieriot/JTaches/blob/master/.jtaches.yaml)
 
@@ -131,7 +131,7 @@ Then, you have access to five things:
 
 Additionally if you use ConfiguredTache:
 
-+ getConfiguration() provide a Map, loaded with the attributes in the Yaml file.
++ getConfiguration() provides a Map, loaded with the attributes in the Yaml file.
 + ConfiguredTache constructor can take a list of String as second argument to indicate mandatory configuration parameters.
 + You can override additionalValidation(Map<String, String> configuration) to provide custom validation. Method executed after mandatory parameters validation.
 
