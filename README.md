@@ -1,9 +1,7 @@
 JTaches
 =======
 
-[![Build Status](https://secure.travis-ci.org/athieriot/JTaches.png)](http://travis-ci.org/athieriot/JTaches)
-
-![](http://dl.dropbox.com/u/4955384/jtaches.png)
+[![Build Status](https://secure.travis-ci.org/athieriot/JTaches.png)](http://travis-ci.org/athieriot/JTaches) [![Coverage Status](https://coveralls.io/repos/athieriot/JTaches/badge.png?branch=master)](https://coveralls.io/r/athieriot/JTaches?branch=master)
 
 About
 -----
