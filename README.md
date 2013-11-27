@@ -16,16 +16,16 @@ Binaries
 
 Thanks to this Protip: [http://coderwall.com/p/ssuaxa](http://coderwall.com/p/ssuaxa), you can now download a Linux executable and just use it (you still need Java):
 
-        wget http://cloud.github.com/downloads/athieriot/JTaches/jtaches-1.2.0
-        chmod +x jtaches-1.2.0
-        ./jtaches-1.2.0 -h
+        wget http://cloud.github.com/downloads/athieriot/JTaches/jtaches-1.3.0
+        chmod +x jtaches-1.3.0
+        ./jtaches-1.3.0 -h
 
 For all other cases, you can find a JAR pre-compiled with all needed dependencies on the [Sonatype](http://search.maven.org/#search%7Cga%7C1%7Cjtaches) repository:
-[jtaches-1.2-jar-with-dependencies.jar](http://search.maven.org/remotecontent?filepath=com/github/athieriot/jtaches/1.2/jtaches-1.2-jar-with-dependencies.jar)
+[jtaches-1.3-jar-with-dependencies.jar](http://search.maven.org/remotecontent?filepath=com/github/athieriot/jtaches/1.3/jtaches-1.3-jar-with-dependencies.jar)
 
 Then you just need to execute:
 
-        java -jar jtaches-1.2-jar-with-dependencies.jar -h
+        java -jar jtaches-1.3-jar-with-dependencies.jar -h
 
 Example of shell launcher: [https://github.com/athieriot/JTaches/blob/master/jtaches](https://github.com/athieriot/JTaches/blob/master/jtaches)
 
@@ -120,7 +120,7 @@ Installation via Maven:
         <dependency>
                 <groupId>com.github.athieriot</groupId>
                 <artifactId>jtaches</artifactId>
-                <version>1.2</version>
+                <version>1.3</version>
                 <scope>test</scope>
         </dependency>
 
