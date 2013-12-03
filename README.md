@@ -138,6 +138,18 @@ Additionally if you use ConfiguredTache:
 One thing you have to know with the configuration file is that the Taches are instantiated by SnakeYaml directly.
 So, if you respect the interface and the SnakeYaml documentation, you can override the default constructors to do whatever you want.
 
+Troubleshooting
+---------------
+
++ IntelliJ backup files:
+
+   If you are using IntelliJ as idea, or if you use another tool that generate backup files in your current work directory, you might want to stop those files from notifying JTaches.
+   This is doable by using the ```excludes``` property available in most Taches.
+
+   For example, to ignore IntelliJ backup files, use this in one of you Tache:
+
+      excludes: "^[.#]|_jb_bak__$"
+
 Known issues
 ------------
 
