@@ -148,7 +148,7 @@ Troubleshooting
 
    For example, to ignore IntelliJ backup files, use this in one of you Tache:
 
-      excludes: "^[.#]|_jb_bak__$"
+      ```excludes: "^[.#]|_jb_bak__$"```
 
 Known issues
 ------------
